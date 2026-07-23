@@ -1,73 +1,130 @@
 # README: Nikky's Clothing Website Design Guidelines
 
-This document serves as the master blueprint for designing and developing the Nikky's Clothing website. It outlines the core visual philosophy, the strict rules of engagement for the design system, and the specific prompts required when generating or building pages within the Anti-Gravity design environment.
+This document serves as the master blueprint for designing and developing the Nikky's Clothing website. It outlines the core visual philosophy, technical stack, and strict rules of engagement for the design system. Designing for a premium, heavily female-focused clothing brand requires a meticulous approach, ensuring every component reflects a simple, detailed, and elegant design structure.
 
 ---
 
-## 1. Visual Direction: How the Website Should Look
+## 1. Brand Vision & Visual Direction
 
-The Nikky's Clothing website must embody a premium, effortless, and timeless aesthetic. The overarching design language relies on a **simple but detailed structure** featuring **subtle designs for an elegant vibe**.
+The overarching design language combines modern minimalism with editorial sophistication. The interface must feel luxurious, intuitive, and memorable, drawing inspiration from luxury retail and high-end editorial fashion magazines.
 
-Because the brand has a strong foundation in premium female fashion, the interface should feel sophisticated and breathable, prioritizing high-quality editorial imagery over heavy graphic elements.
+**Core Principles:**
 
-* **Color Story:** The interface relies exclusively on a **cool color palette**. The foundation is built on Crisp White and Cool Frost to create a bright, airy feel, anchored by Midnight Navy for high-contrast, legible typography. Accents of Icy Slate and Glacier Blue should be used sparingly for borders, hover states, and subtle visual cues.
-* **Structure:** Layouts must be cleanly aligned to a standard grid. "Detailed structure" means that while the layout appears minimalist, the micro-interactions, padding, and alignment are mathematically precise.
-* **Typography:** Elegant Serif headings paired with highly legible, modern Sans-Serif body text.
-
----
-
-## 2. Do's and Don'ts of the Website
-
-### **The Do's**
-
-* **DO prioritize whitespace:** Allow elements to breathe. Ample negative space is crucial for the "elegant vibe."
-* **DO stick to the cool color palette:** Strictly use the predefined Midnight Navy, Icy Slate, Cool Frost, Crisp White, and Glacier Blue.
-* **DO use subtle, fluid animations:** Elements should ease in smoothly (e.g., slight fades or gentle upward floats) rather than snapping aggressively into place.
-* **DO maintain high contrast:** Ensure all text, especially in Midnight Navy, is easily readable against the Crisp White or Cool Frost backgrounds.
-* **DO use high-quality imagery:** Product photography should be the focal point of the page, unencumbered by text overlays where possible.
-
-### **The Don'ts**
-
-* **DON'T use warm, neon, or off-brand colors:** Avoid reds, oranges, yellows, or any colors outside the approved cool palette, except where naturally occurring in product photography.
-* **DON'T clutter the interface:** Avoid cramming too many products or text blocks into a single viewport.
-* **DON'T use heavy shadows or gradients:** Stick to flat colors, subtle 1px borders, and extremely soft, diffused drop-shadows only if necessary for depth.
-* **DON'T break the typography hierarchy:** Never use the Serif heading font for long paragraphs of body text, and do not use more than two font families.
+* **Timeless:** Avoid quickly outdated trendy UI elements.
+* **Premium:** Utilize large photography, refined spacing, and subtle animations.
+* **Minimal:** Remove visual clutter; every component must have a clear purpose.
+* **Human:** Design for emotions before interactions.
+* **Elegant:** Achieve luxury through restraint, generous white space, and impeccable typography, rather than excessive decoration.
 
 ---
 
-## 3. Strict Rules for Design System Compliance
+## 2. Color System
 
-When building any component or page for Nikky's Clothing, the following rules are non-negotiable:
+The interface relies on a sophisticated palette designed to elevate the brand while maintaining timelessness.
 
-1. **Zero-Deviation Color Policy:** UI elements (buttons, backgrounds, text, lines) must use the exact hex codes from the brand palette. No opacity changes to create "new" colors.
-2. **Component Reusability:** Do not create unique buttons or input fields for specific pages. All CTAs must use the primary (Midnight Navy background, White text) or secondary (Transparent background, Midnight Navy border) button styles.
-3. **Grid Adherence:** All pages must follow a 12-column grid system. Padding and margins must follow an 8pt baseline grid (e.g., 8px, 16px, 24px, 32px, 48px, 64px) to ensure the "simple but detailed structure" remains mathematically consistent.
-4. **Microcopy Consistency:** Always use the approved brand voice for placeholders and empty states (e.g., "Your cart is waiting for your next favorite piece").
+### Primary Palette
+
+| Color Name | Hex Code | Usage |
+| --- | --- | --- |
+| **Midnight Navy** | `#16202C` | Primary Buttons, Footer, Headings |
+| **Deep Charcoal** | `#222831` | Primary Text |
+| **Graphite** | `#4A5565` | Secondary Text |
+| **Soft White** | `#FCFCFC` | Main Background |
+| **Snow** | `#FFFFFF` | Cards |
+
+### Premium Accent Palette
+
+| Color Name | Hex Code | Usage |
+| --- | --- | --- |
+| **Champagne Gold** | `#C9A96E` | Premium accents, Icons |
+| **Soft Gold** | `#D8C18A` | Hover States |
+| **Platinum** | `#E7E7E7` | Borders |
+| **Stone Gray** | `#E4E7EB` | Section Background |
+| **Mist Blue** | `#EEF4F8` | Soft Background Sections |
+| **Sage Mist** | `#D9E4DD` | Seasonal Collection Accent |
+| **Dusty Blue** | `#B8C8D6` | Product Badges |
+| **Cool Silver** | `#D6DCE5` | Inputs |
 
 ---
 
-## 4. The Anti-Gravity Design Prompt
+## 3. Typography
 
-**Copy and paste the following prompt into the Anti-Gravity engine before initiating the design of any new page or component for Nikky's Clothing.**
+The typographic hierarchy relies on a high-contrast pairing to communicate premium quality and modern usability.
 
-> **SYSTEM OVERRIDE: NIKKY'S CLOTHING DESIGN SYSTEM**
+**Display Font: Playfair Display**
+
+* **Usage:** Hero Titles, Collection Titles, Editorial Sections, Featured Quotes.
+* **Scale:** Display XL (72px), Display L (60px), H1 (48px), H2 (40px), H3 (32px), H4 (24px), H5 (20px).
+
+**UI Font: Inter**
+
+* **Usage:** Navigation, Paragraphs, Forms, Product Information, Dashboard, Checkout.
+* **Scale:** Body Large (18px), Body (16px), Small (14px), Caption (12px).
+
+---
+
+## 4. Layout, Spacing, & Motion
+
+A detailed and mathematically precise structure is essential for an uncluttered, elegant vibe.
+
+**Structure & Spacing**
+
+* **Spacing Scale:** 4, 8, 12, 16, 20, 24, 32, 40, 48, 64, 80, 96, 120, 160.
+* **Border Radius:** Small (8px), Medium (12px), Large (20px), Card (24px), Button (999px).
+
+**Shadows**
+
+* **Soft:** 0 6px 20px rgba(0,0,0,.05)
+* **Medium:** 0 12px 40px rgba(0,0,0,.08)
+* **Large:** 0 24px 80px rgba(0,0,0,.12)
+
+**Motion System**
+
+* **Philosophy:** Animations must feel elegant, soft, and intentional—never playful or bouncy.
+* **Durations:** 150ms, 250ms, 350ms, 500ms (using ease-out, ease-in-out, or spring curves).
+* **Hover Effects:** Lift Card, Fade Image, Scale Image 1.03, Fade Button, Soft Shadow Increase.
+
+---
+
+## 5. Technology Stack
+
+**Frontend & Styling**
+
+* **Framework:** Next.js 15 (App Router, Server Components).
+* **Styling:** Tailwind CSS 4.
+* **Animation:** Framer Motion.
+
+**Backend, Auth, & Storage**
+
+* **Database/Auth:** Supabase (PostgreSQL, Edge Functions, Row Level Security).
+* **Storage:** Supabase Storage (for product images, banners, user avatars).
+
+**Payments & Deployment**
+
+* **Payments:** Paystack (Nigerian Cards, Bank Transfer) and Stripe (International, Apple/Google Pay).
+* **Infrastructure:** Vercel.
+
+---
+
+## 6. The Anti-Gravity Design Prompt
+
+Copy and paste the following prompt into the Anti-Gravity engine before initiating the design of any new page or component for Nikky's Clothing.
+
+> **SYSTEM OVERRIDE: NIKKY'S CLOTHING DESIGN SYSTEM V1.0**
 > **Role:** You are a senior UI/UX designer and developer tasked with generating a page for "Nikky's Clothing" within the Anti-Gravity environment.
-> **Objective:** Design the requested page while strictly enforcing the Nikky's Clothing brand guidelines. The output must reflect a premium, effortless, and elegant e-commerce experience.
+> **Objective:** Design the requested page while strictly enforcing the Nikky's Clothing brand guidelines. The output must reflect a premium, effortless, minimal, and elegant e-commerce experience inspired by luxury retail and editorial fashion magazines.
 > **Strict Constraints & Instructions:**
-> 1. **Visual Style:** The design must maintain a simple but detailed structure, incorporating subtle designs to achieve an elegant vibe. It must look like a top-tier premium fashion brand.
-> 2. **Color Palette:** You are strictly limited to the following cool color palette for all UI elements. DO NOT invent new colors.
-> * Primary Text/Buttons: Midnight Navy (`#1A2433`)
-> * Secondary Text/Borders: Icy Slate (`#7A8B99`)
-> * Background/Cards: Cool Frost (`#F0F4F8`)
-> * Main Background: Crisp White (`#FFFFFF`)
-> * Accents/Hover: Glacier Blue (`#D4E0EC`)
+> 1. **Visual Style:** The design must maintain a simple but detailed structure. Maximize generous white space. Use large, editorial-style photography. Apply minimal glassmorphism and soft shadows.
+> 2. **Color Palette:** You are strictly limited to the brand palette. Do not invent new colors.
+> * Primary UI/Headings: Midnight Navy (`#16202C`), Deep Charcoal (`#222831`)
+> * Backgrounds: Soft White (`#FCFCFC`), Snow (`#FFFFFF`), Mist Blue (`#EEF4F8`)
+> * Accents/Interactive: Champagne Gold (`#C9A96E`), Soft Gold (`#D8C18A`)
+> * Borders/Inputs: Platinum (`#E7E7E7`), Cool Silver (`#D6DCE5`)
 > 
 > 
-> 3. **Typography:** Use an elegant Serif font for all Headings (H1-H4). Use a clean Sans-Serif font for all body text, navigation, buttons, and microcopy.
-> 4. **Layout:** Maximize whitespace. Use an 8pt spacing system for all margins and padding. Ensure a minimalist, uncluttered grid layout.
-> 5. **Execution:** Do not add unnecessary graphical embellishments, heavy drop shadows, or complex gradients. Rely on the cool colors, precise alignment, and typography to create visual interest.
+> 3. **Typography:** Use **Playfair Display** for all headings, hero titles, and editorial quotes. Use **Inter** for all navigation, paragraphs, UI forms, and microcopy.
+> 4. **Layout & Shapes:** Strictly adhere to the spacing scale (multiples of 4/8). Apply pill-shaped buttons (999px radius) and smooth rounded cards (24px radius).
+> 5. **Execution:** Do not add heavy visual clutter. Rely on the sophisticated typography, refined spacing, and subtle structural details to create an elegant vibe. Ensure all microcopy matches the calm, trustworthy brand voice.
 > 
 > 
 > **Task:** Acknowledge these rules, apply them strictly to the environment, and generate the requested layout accordingly without deviating from this master prompt.
-> # Nikky-s
-a premium, timeless and sleek clothing brand At Nikky's Clothing, we believe fashion is how you introduce yourself to the world. We curate premium collections that blend contemporary trends with timeless elegance.
