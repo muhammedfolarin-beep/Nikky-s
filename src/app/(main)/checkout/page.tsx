@@ -2,15 +2,24 @@
 
 import { useState } from "react";
 import { useCart } from "@/context/CartContext";
+import { useCurrency } from "@/context/CurrencyContext";
 import { motion } from "framer-motion";
 import { ChevronRight, CreditCard, Truck, User } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { processOrder } from "@/lib/actions";
+import { useSession } from "next-auth/react";
 
 export default function CheckoutPage() {
   const { items, subtotal, clearCart } = useCart();
+  const { formatPrice } = useCurrency();
   const router = useRouter();
+  const { status } = useSession({
+    required: true,
+    onUnauthenticated() {
+      router.push("/login?callbackUrl=/checkout");
+    },
+  });
   
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -59,6 +68,15 @@ export default function CheckoutPage() {
 
   const shippingCost = subtotal > 200 ? 0 : 15;
   const total = subtotal + shippingCost;
+
+  if (status === "loading") {
+    return (
+      <div className="min-h-[70vh] flex flex-col items-center justify-center p-8 bg-brand-softwhite">
+        <div className="w-8 h-8 border-4 border-brand-midnight border-t-transparent rounded-full animate-spin mb-4"></div>
+        <p className="text-brand-graphite">Loading checkout...</p>
+      </div>
+    );
+  }
 
   if (items.length === 0 && !isProcessing) {
     return (
@@ -257,7 +275,7 @@ export default function CheckoutPage() {
                     disabled={isProcessing}
                     className="w-full bg-brand-midnight text-brand-snow py-4 rounded-full font-medium hover:bg-brand-charcoal transition-colors shadow-soft flex justify-center items-center gap-2"
                   >
-                    {isProcessing ? "Processing..." : `Place Order • $${total}`}
+                    {isProcessing ? "Processing..." : `Place Order • ${formatPrice(total)}`}
                   </button>
                 </motion.div>
               )}
@@ -283,7 +301,7 @@ export default function CheckoutPage() {
                     <p className="text-xs text-brand-graphite">Qty: {item.quantity}</p>
                   </div>
                   <div className="flex items-center">
-                    <span className="text-sm font-medium text-brand-midnight">${item.product.price * item.quantity}</span>
+                    <span className="text-sm font-medium text-brand-midnight">{formatPrice(item.product.price * item.quantity)}</span>
                   </div>
                 </div>
               ))}
@@ -294,14 +312,14 @@ export default function CheckoutPage() {
             <div className="space-y-3 text-sm text-brand-graphite mb-6">
               <div className="flex justify-between">
                 <span>Subtotal</span>
-                <span className="text-brand-charcoal font-medium">${subtotal}</span>
+                <span className="text-brand-charcoal font-medium">{formatPrice(subtotal)}</span>
               </div>
               <div className="flex justify-between">
                 <span>Shipping</span>
-                <span className="text-brand-charcoal font-medium">{shippingCost === 0 ? 'Free' : `$${shippingCost}`}</span>
+                <span className="text-brand-charcoal font-medium">{shippingCost === 0 ? 'Free' : formatPrice(shippingCost)}</span>
               </div>
               {shippingCost > 0 && (
-                <p className="text-xs text-brand-champagne">* Free shipping on orders over $200</p>
+                <p className="text-xs text-brand-champagne">* Free shipping on orders over {formatPrice(200)}</p>
               )}
             </div>
             
@@ -309,7 +327,7 @@ export default function CheckoutPage() {
             
             <div className="flex justify-between items-center text-lg">
               <span className="font-medium text-brand-midnight">Total</span>
-              <span className="font-semibold text-brand-midnight">${total}</span>
+              <span className="font-semibold text-brand-midnight">{formatPrice(total)}</span>
             </div>
           </div>
         </div>

@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import DeleteCustomerButton from "./DeleteCustomerButton";
 
 export default async function AdminCustomersPage() {
   const customers = await prisma.user.findMany({
@@ -20,6 +21,7 @@ export default async function AdminCustomersPage() {
               <th className="p-4">Role</th>
               <th className="p-4">Orders</th>
               <th className="p-4">Total Spent</th>
+              <th className="p-4 text-right">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
@@ -44,6 +46,11 @@ export default async function AdminCustomersPage() {
                   </td>
                   <td className="p-4 text-sm text-gray-900 font-medium">
                     ${totalSpent.toFixed(2)}
+                  </td>
+                  <td className="p-4 text-right">
+                    {customer.role !== 'ADMIN' && (
+                      <DeleteCustomerButton customerId={customer.id} customerName={customer.name || customer.email} />
+                    )}
                   </td>
                 </tr>
               )

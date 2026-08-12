@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Metadata } from "next";
+import { prisma } from "@/lib/prisma";
 
 export const metadata: Metadata = {
   title: "Collections",
@@ -28,7 +29,19 @@ const collections = [
   }
 ];
 
-export default function CollectionsPage() {
+export default async function CollectionsPage() {
+  const allProducts = await prisma.product.findMany({
+    orderBy: { createdAt: "desc" }
+  });
+
+  const derivedCollections = collections.map(collection => {
+    const productsInCol = allProducts.filter(p => p.collection === collection.name);
+    const colImage = productsInCol.length > 0 && productsInCol[0].images?.length > 0 
+      ? productsInCol[0].images.split(',')[0] 
+      : collection.image;
+    return { ...collection, image: colImage };
+  });
+
   return (
     <div className="min-h-screen bg-brand-softwhite pt-12 pb-24 px-4 md:px-8 lg:px-16">
       <div className="max-w-[1400px] mx-auto">
@@ -38,7 +51,7 @@ export default function CollectionsPage() {
         </div>
 
         <div className="flex flex-col gap-8">
-          {collections.map((collection, index) => (
+          {derivedCollections.map((collection, index) => (
             <Link 
               key={collection.slug} 
               href={`/collections/${collection.slug}`}

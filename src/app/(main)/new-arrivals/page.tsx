@@ -1,4 +1,4 @@
-import { mockProducts } from "@/data/mockProducts";
+import { prisma } from "@/lib/prisma";
 import ProductCard from "@/components/shop/ProductCard";
 import { Metadata } from "next";
 
@@ -7,8 +7,19 @@ export const metadata: Metadata = {
   description: "Discover our latest premium designs and fresh styles just landed.",
 };
 
-export default function NewArrivalsPage() {
-  const newProducts = mockProducts.filter(p => p.isNew);
+export default async function NewArrivalsPage() {
+  const newProducts = await prisma.product.findMany({
+    orderBy: { createdAt: "desc" },
+    take: 12
+  });
+
+  // format for the ProductCard
+  const formattedProducts = newProducts.map(product => ({
+    ...product,
+    colors: product.colors.split(','),
+    sizes: product.sizes.split(','),
+    images: product.images.split(',')
+  }));
 
   return (
     <div className="min-h-screen bg-brand-softwhite">
@@ -33,8 +44,8 @@ export default function NewArrivalsPage() {
         </div>
         
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-12">
-          {newProducts.map(product => (
-            <ProductCard key={product.id} product={product} />
+          {formattedProducts.map(product => (
+            <ProductCard key={product.id} product={product as any} />
           ))}
         </div>
       </div>

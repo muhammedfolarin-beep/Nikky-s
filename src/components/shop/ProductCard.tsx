@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { Product } from "@/data/mockProducts";
+import { useCurrency } from "@/context/CurrencyContext";
 
 interface ProductCardProps {
   product: Product;
@@ -12,6 +13,7 @@ interface ProductCardProps {
 
 export default function ProductCard({ product }: ProductCardProps) {
   const [isHovered, setIsHovered] = useState(false);
+  const { formatPrice } = useCurrency();
 
   return (
     <motion.div
@@ -62,7 +64,7 @@ export default function ProductCard({ product }: ProductCardProps) {
             {product.name}
           </Link>
           <span className="font-sans text-sm font-semibold text-brand-midnight whitespace-nowrap">
-            ${product.price}
+            {formatPrice(product.price)}
           </span>
         </div>
         <p className="font-sans text-xs text-brand-graphite">{product.brand}</p>

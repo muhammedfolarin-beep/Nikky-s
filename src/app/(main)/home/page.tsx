@@ -10,11 +10,17 @@ import { ArrowRight, Package, CreditCard, Truck, Headphones, Play, Star, PhoneCa
 
 import { getProducts, getStoreSettings } from "@/lib/actions";
 
-const shopCategories = [
+const DEFAULT_CATEGORIES = [
   { name: "Everyday Essentials", image: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=800&auto=format&fit=crop" },
   { name: "Evening & Occasion", image: "https://images.unsplash.com/photo-1582142407894-ec85a1260a46?q=80&w=800&auto=format&fit=crop" },
   { name: "Outerwear & Layering", image: "https://images.unsplash.com/photo-1539533113208-f6df8cc8b543?q=80&w=800&auto=format&fit=crop" },
   { name: "The Resort Collection", image: "https://images.unsplash.com/photo-1584916201218-f4242ceb4809?q=80&w=800&auto=format&fit=crop" }
+];
+
+const DEFAULT_COLLECTIONS = [
+  { name: "The SN24 Capsule", slug: "the-sn24-capsule", image: "https://images.unsplash.com/photo-1544022613-e87ca75a784a?q=80&w=1200&auto=format&fit=crop" },
+  { name: "The Midnight Navy Edit", slug: "the-midnight-navy-edit", image: "https://images.unsplash.com/photo-1595777457583-95e059d581b8?q=80&w=1200&auto=format&fit=crop" },
+  { name: "Soft White Minimalism", slug: "soft-white-minimalism", image: "https://images.unsplash.com/photo-1515347619362-747da441229a?q=80&w=1200&auto=format&fit=crop" }
 ];
 
 const promoBanners = [
@@ -64,17 +70,39 @@ export default function Home() {
   const [email, setEmail] = useState("");
   const [allProducts, setAllProducts] = useState<Product[]>([]);
   const [newProducts, setNewProducts] = useState<Product[]>([]);
+  const [discountedProducts, setDiscountedProducts] = useState<Product[]>([]);
   const [storeSettings, setStoreSettings] = useState<any>(null);
 
   useEffect(() => {
     getProducts().then(products => {
       setAllProducts(products as Product[]);
-      setNewProducts(products.filter((p: any) => p.isNew).slice(0, 4));
+      setNewProducts(products.slice(0, 4) as Product[]);
+      
+      // Filter for discounted products (where originalPrice > price)
+      const discounted = products.filter(p => p.originalPrice && p.originalPrice > p.price).slice(0, 4);
+      setDiscountedProducts(discounted as Product[]);
     });
     getStoreSettings().then(settings => {
       if (settings) setStoreSettings(settings);
     });
   }, []);
+
+  // Compute derived categories and collections
+  const derivedCategories = DEFAULT_CATEGORIES.map(cat => {
+    const productsInCat = allProducts.filter(p => p.category === cat.name);
+    const catImage = productsInCat.length > 0 && productsInCat[0].images?.length > 0 
+      ? productsInCat[0].images[0] 
+      : cat.image;
+    return { ...cat, image: catImage, count: productsInCat.length };
+  });
+
+  const derivedCollections = DEFAULT_COLLECTIONS.map(col => {
+    const productsInCol = allProducts.filter((p: any) => p.collection === col.name);
+    const colImage = productsInCol.length > 0 && productsInCol[0].images?.length > 0 
+      ? productsInCol[0].images[0] 
+      : col.image;
+    return { ...col, image: colImage };
+  });
   return (
     <div className="w-full">
       {/* Hero Section */}
@@ -140,8 +168,7 @@ export default function Home() {
           <h2 className="font-display text-4xl md:text-5xl font-semibold text-brand-midnight mb-16">Shop by Style Categories</h2>
 
           <div className="flex flex-wrap justify-center gap-8 md:gap-12">
-            {shopCategories.map((cat, idx) => {
-              const count = allProducts.filter(p => p.category === cat.name).length;
+            {derivedCategories.map((cat, idx) => {
               return (
               <Link key={idx} href={`/shop?category=${cat.name}`} className="flex flex-col items-center group cursor-pointer">
                 <div className="w-40 h-40 md:w-48 md:h-48 rounded-full overflow-hidden mb-6 relative bg-[#F5F4F0]">
@@ -153,7 +180,7 @@ export default function Home() {
                    />
                 </div>
                 <h4 className="font-semibold text-brand-midnight text-lg mb-1">{cat.name}</h4>
-                <span className="text-xs text-brand-graphite">{count} Products</span>
+                <span className="text-xs text-brand-graphite">{cat.count} Products</span>
               </Link>
             )})}
           </div>
@@ -207,7 +234,16 @@ export default function Home() {
       {/* Promo Banners Section */}
       <section className="w-full pb-20 px-8 bg-brand-snow">
         <div className="max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {promoBanners.map((promo, idx) => (
+          {(discountedProducts.length > 0 ? discountedProducts.slice(0, 3).map(p => {
+            const desc = p.description ? (p.description.length > 60 ? p.description.substring(0, 60) + "..." : p.description) : "Discover this exclusive offer on our premium collection.";
+            return {
+              discount: `${Math.round(((p.originalPrice! - p.price) / p.originalPrice!) * 100)}% Off`,
+              title: p.name,
+              desc: desc,
+              image: (p.images && p.images.length > 0) ? p.images[0] : promoBanners[0].image,
+              link: `/shop/${p.id}`
+            };
+          }) : promoBanners).map((promo, idx) => (
             <div key={idx} className="bg-[#F5F4F0] rounded-xl overflow-hidden flex flex-row h-[280px]">
               <div className="w-[45%] relative h-full">
                 <Image 
@@ -219,11 +255,11 @@ export default function Home() {
               </div>
               <div className="w-[55%] p-6 flex flex-col justify-center">
                 <span className="text-xs font-semibold uppercase mb-2 text-brand-midnight">{promo.discount}</span>
-                <h3 className="font-display text-2xl font-semibold mb-3 leading-tight text-brand-midnight">{promo.title}</h3>
-                <p className="text-xs text-brand-graphite mb-6 leading-relaxed opacity-80">{promo.desc}</p>
+                <h3 className="font-display text-2xl font-semibold mb-3 leading-tight text-brand-midnight line-clamp-2">{promo.title}</h3>
+                <p className="text-xs text-brand-graphite mb-6 leading-relaxed opacity-80 line-clamp-2">{promo.desc}</p>
                 <div>
                   <Link href={promo.link} className="flex items-center gap-3 border border-gray-300 rounded-md py-1.5 px-1.5 pl-4 hover:border-brand-midnight transition-colors bg-transparent group max-w-fit">
-                    <span className="text-sm font-semibold text-brand-midnight">Get Offer</span>
+                    <span className="text-sm font-semibold text-brand-midnight">Shop Offer</span>
                     <div className="bg-brand-midnight text-white p-2 rounded flex items-center justify-center group-hover:bg-brand-charcoal transition-colors">
                       <ArrowRight size={14} />
                     </div>
@@ -398,18 +434,7 @@ export default function Home() {
           <h2 className="font-display text-4xl md:text-5xl font-semibold text-brand-midnight mb-12">Explore our latest collections</h2>
 
           <div className="flex overflow-x-auto snap-x snap-mandatory gap-6 mb-12 pb-4 scrollbar-hide" style={{ scrollbarWidth: 'none' }}>
-            {[
-              {
-                name: "Autumn Essentials",
-                slug: "autumn-essentials",
-                image: "https://images.unsplash.com/photo-1544022613-e87ca75a784a?q=80&w=1200&auto=format&fit=crop",
-              },
-              {
-                name: "Evening Elegance",
-                slug: "evening-elegance",
-                image: "https://images.unsplash.com/photo-1595777457583-95e059d581b8?q=80&w=1200&auto=format&fit=crop",
-              }
-            ].map((collection, idx) => (
+            {derivedCollections.map((collection, idx) => (
               <Link 
                 key={idx} 
                 href={`/collections/${collection.slug}`}

@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { DollarSign, Package, ShoppingBag, Users } from "lucide-react";
+import FormattedPrice from "@/components/ui/FormattedPrice";
 
 export default async function AdminDashboard() {
   const [totalProducts, totalOrders, totalUsers] = await Promise.all([
@@ -14,12 +15,14 @@ export default async function AdminDashboard() {
     include: { user: true }
   });
 
+  const totalRevenue = recentOrders.reduce((sum, order) => sum + order.totalAmount, 0);
+
   return (
     <div className="p-8">
       <h1 className="text-3xl font-display font-semibold text-gray-800 mb-8">Dashboard Overview</h1>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <StatCard title="Total Revenue" value="$0.00" icon={<DollarSign size={24} className="text-green-600" />} />
+        <StatCard title="Total Revenue" value={<FormattedPrice amount={totalRevenue} />} icon={<DollarSign size={24} className="text-green-600" />} />
         <StatCard title="Total Orders" value={totalOrders.toString()} icon={<ShoppingBag size={24} className="text-blue-600" />} />
         <StatCard title="Total Products" value={totalProducts.toString()} icon={<Package size={24} className="text-purple-600" />} />
         <StatCard title="Total Customers" value={totalUsers.toString()} icon={<Users size={24} className="text-orange-600" />} />
@@ -49,7 +52,7 @@ export default async function AdminDashboard() {
                     <td className="py-4 text-gray-600 font-mono">#{order.id.slice(-6).toUpperCase()}</td>
                     <td className="py-4 text-gray-800 font-medium">{order.shippingName}</td>
                     <td className="py-4 text-gray-500">{order.createdAt.toLocaleDateString()}</td>
-                    <td className="py-4 text-gray-800 font-medium">${order.totalAmount.toFixed(2)}</td>
+                    <td className="py-4 text-gray-800 font-medium"><FormattedPrice amount={order.totalAmount} /></td>
                     <td className="py-4">
                       <span className="bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-xs font-medium">
                         {order.status}
@@ -66,7 +69,7 @@ export default async function AdminDashboard() {
   );
 }
 
-function StatCard({ title, value, icon }: { title: string, value: string, icon: React.ReactNode }) {
+function StatCard({ title, value, icon }: { title: string, value: React.ReactNode, icon: React.ReactNode }) {
   return (
     <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 flex items-center gap-4">
       <div className="p-3 bg-gray-50 rounded-lg">

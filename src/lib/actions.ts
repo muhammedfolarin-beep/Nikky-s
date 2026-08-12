@@ -1,6 +1,7 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
+import { revalidatePath } from "next/cache";
 
 export async function getProducts() {
   try {
@@ -89,6 +90,7 @@ export async function createProduct(data: any) {
         name: data.name,
         brand: data.brand || "Nikky's Reserve",
         price: parseFloat(data.price),
+        originalPrice: data.originalPrice ? parseFloat(data.originalPrice) : null,
         category: data.category,
         type: data.type || "Outerwear",
         colors: data.colors,
@@ -102,6 +104,7 @@ export async function createProduct(data: any) {
         collection: data.collection,
       }
     });
+    revalidatePath("/admin/products");
     return { success: true, product };
   } catch (error) {
     console.error("Error creating product:", error);
@@ -116,6 +119,7 @@ export async function updateProduct(id: string, data: any) {
       data: {
         name: data.name,
         price: parseFloat(data.price),
+        originalPrice: data.originalPrice ? parseFloat(data.originalPrice) : null,
         category: data.category,
         colors: data.colors,
         sizes: data.sizes,
@@ -124,6 +128,7 @@ export async function updateProduct(id: string, data: any) {
         collection: data.collection,
       }
     });
+    revalidatePath("/admin/products");
     return { success: true, product };
   } catch (error) {
     console.error("Error updating product:", error);
@@ -225,5 +230,36 @@ export async function updateUserAccount(userId: string, data: { name?: string, e
   } catch (error) {
     console.error("Error updating user account:", error);
     return { success: false, error: "Failed to update account" };
+  }
+}
+
+export async function deleteProduct(id: string) {
+  try {
+    await prisma.product.delete({
+      where: { id }
+    });
+    revalidatePath("/admin/products");
+    return { success: true };
+  } catch (error) {
+    console.error("Error deleting product:", error);
+    return { success: false, error: "Failed to delete product" };
+  }
+}
+
+export async function deleteUser(id: string) {
+  try {
+    const user = await prisma.user.findUnique({ where: { id } });
+    if (!user) return { success: false, error: "User not found" };
+    
+    if (user.role === "ADMIN") {
+      return { success: false, error: "Cannot delete an administrator" };
+    }
+    
+    await prisma.user.delete({ where: { id } });
+    revalidatePath("/admin/customers");
+    return { success: true };
+  } catch (error) {
+    console.error("Failed to delete user:", error);
+    return { success: false, error: "Failed to delete user" };
   }
 }

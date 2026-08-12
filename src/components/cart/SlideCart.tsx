@@ -1,6 +1,7 @@
 "use client";
 
 import { useCart } from "@/context/CartContext";
+import { useCurrency } from "@/context/CurrencyContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Minus, Plus, Trash2 } from "lucide-react";
 import Image from "next/image";
@@ -9,6 +10,7 @@ import { useRouter } from "next/navigation";
 
 export default function SlideCart() {
   const { isCartOpen, closeCart, items, updateQuantity, removeItem, subtotal } = useCart();
+  const { formatPrice } = useCurrency();
   const router = useRouter();
 
   const handleCheckout = () => {
@@ -112,7 +114,7 @@ export default function SlideCart() {
                           </div>
                           
                           <span className="font-semibold text-brand-midnight">
-                            ${item.product.price * item.quantity}
+                            {formatPrice(item.product.price * item.quantity)}
                           </span>
                         </div>
                       </div>
@@ -127,7 +129,7 @@ export default function SlideCart() {
               <div className="p-6 border-t border-brand-stone bg-brand-softwhite">
                 <div className="flex justify-between items-center mb-6">
                   <span className="text-brand-charcoal font-medium uppercase tracking-wide text-sm">Subtotal</span>
-                  <span className="text-xl font-medium text-brand-midnight">${subtotal}</span>
+                  <span className="text-xl font-medium text-brand-midnight">{formatPrice(subtotal)}</span>
                 </div>
                 <p className="text-xs text-brand-graphite mb-6">
                   Shipping, taxes, and discounts calculated at checkout.

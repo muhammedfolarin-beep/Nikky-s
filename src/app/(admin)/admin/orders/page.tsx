@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import StatusSelect from "./StatusSelect";
+import FormattedPrice from "@/components/ui/FormattedPrice";
 
 export default async function AdminOrdersPage() {
   const orders = await prisma.order.findMany({
@@ -50,7 +51,7 @@ export default async function AdminOrdersPage() {
                     {order.items.reduce((acc, item) => acc + item.quantity, 0)} items
                   </td>
                   <td className="p-4 text-sm text-gray-900 font-medium">
-                    ${order.totalAmount.toFixed(2)}
+                    <FormattedPrice amount={order.totalAmount} />
                   </td>
                   <td className="p-4">
                     <StatusSelect orderId={order.id} currentStatus={order.status} />

@@ -5,11 +5,18 @@ import { useRouter } from "next/navigation";
 import { createProduct } from "@/lib/actions";
 import Link from "next/link";
 import Image from "next/image";
-import { ChevronRight, Save, Check, Plus, Image as ImageIcon } from "lucide-react";
+import { ChevronRight, Save, Check, Plus, Package, Eye, X } from "lucide-react";
+import ImageUploader from "@/components/admin/ImageUploader";
+import ProductGallery from "@/components/shop/ProductGallery";
+import ProductInfo from "@/components/shop/ProductInfo";
+import { useCurrency } from "@/context/CurrencyContext";
 
 export default function AddProductPage() {
   const router = useRouter();
+  const { currency, exchangeRate } = useCurrency();
+  const currencySymbol = currency === 'NGN' ? '₦' : '$';
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isPreviewing, setIsPreviewing] = useState(false);
   const [error, setError] = useState("");
   const [formData, setFormData] = useState({
     name: "",
@@ -19,14 +26,16 @@ export default function AddProductPage() {
     colors: "#16202C",
     sizes: "S,M,L",
     description: "",
+    material: "",
+    careInstructions: "",
+    collection: "",
     stock: "100",
     discount: "0",
     discountType: "None"
   });
 
   // Derived state for the image upload card
-  const imagesList = formData.images.split(',').map(s => s.trim()).filter(Boolean);
-  const mainImage = imagesList.length > 0 ? imagesList[0] : null;
+  const imagesList = formData.images ? formData.images.split(',').map(s => s.trim()).filter(Boolean) : [];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,7 +48,23 @@ export default function AddProductPage() {
       return;
     }
 
-    const result = await createProduct(formData);
+    // Calculate basePrice and originalPrice
+    const inputPrice = parseFloat(formData.price) / exchangeRate;
+    const discountValue = parseFloat(formData.discount) || 0;
+    
+    let basePrice = inputPrice;
+    let originalPrice = null;
+
+    if (discountValue > 0) {
+      originalPrice = inputPrice.toFixed(2);
+      basePrice = inputPrice - (inputPrice * (discountValue / 100));
+    }
+
+    const result = await createProduct({
+      ...formData,
+      price: basePrice.toFixed(2),
+      originalPrice: originalPrice
+    });
     
     if (result.success) {
       router.push("/admin/products");
@@ -64,6 +89,13 @@ export default function AddProductPage() {
             </span>
           </div>
           <div className="flex items-center gap-3">
+            <button 
+              type="button" 
+              onClick={() => setIsPreviewing(true)}
+              className="flex items-center gap-2 px-5 py-2.5 rounded-lg border border-gray-200 bg-white text-gray-700 font-medium hover:bg-gray-50 text-sm transition-colors"
+            >
+              <Eye size={16} /> Preview
+            </button>
             <button 
               type="button" 
               className="flex items-center gap-2 px-5 py-2.5 rounded-lg border border-gray-200 bg-white text-gray-700 font-medium hover:bg-gray-50 text-sm transition-colors"
@@ -147,13 +179,50 @@ export default function AddProductPage() {
                   
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-3">Colors</label>
-                    <p className="text-xs text-gray-400 mb-3 -mt-2">Enter hex codes</p>
+                    <p className="text-xs text-gray-400 mb-3 -mt-2">Enter hex codes or names, separated by commas</p>
                     <input 
                       type="text" 
                       value={formData.colors}
                       onChange={(e) => setFormData({...formData, colors: e.target.value})}
                       className="w-full bg-[#F8F9FA] rounded-xl p-3.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-brand-champagne/50"
-                      placeholder="#16202C, #FFFFFF"
+                      placeholder="#16202C, #FFFFFF, Red"
+                    />
+                    <div className="flex flex-wrap gap-2 mt-3">
+                      {formData.colors.split(',').map((color, idx) => {
+                        const trimmedColor = color.trim();
+                        if (!trimmedColor) return null;
+                        return (
+                          <div 
+                            key={idx} 
+                            className="w-6 h-6 rounded-full border border-gray-200 shadow-sm"
+                            style={{ backgroundColor: trimmedColor }}
+                            title={trimmedColor}
+                          />
+                        )
+                      })}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-8 pt-2">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Material</label>
+                    <input 
+                      type="text" 
+                      value={formData.material}
+                      onChange={(e) => setFormData({...formData, material: e.target.value})}
+                      className="w-full bg-[#F8F9FA] rounded-xl p-3.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-brand-champagne/50"
+                      placeholder="e.g. 100% Cotton"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Care Instructions</label>
+                    <input 
+                      type="text" 
+                      value={formData.careInstructions}
+                      onChange={(e) => setFormData({...formData, careInstructions: e.target.value})}
+                      className="w-full bg-[#F8F9FA] rounded-xl p-3.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-brand-champagne/50"
+                      placeholder="e.g. Dry clean only"
                     />
                   </div>
                 </div>
@@ -168,7 +237,7 @@ export default function AddProductPage() {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Base Pricing</label>
                   <div className="relative">
-                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500">$</span>
+                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500">{currencySymbol}</span>
                     <input 
                       type="number" 
                       step="0.01"
@@ -201,6 +270,11 @@ export default function AddProductPage() {
                     />
                     <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500">%</span>
                   </div>
+                  {parseFloat(formData.discount) > 0 && parseFloat(formData.price) > 0 && (
+                    <p className="text-xs text-brand-charcoal mt-2">
+                      Final Selling Price: <span className="font-medium text-brand-midnight">{currencySymbol}{(parseFloat(formData.price) - (parseFloat(formData.price) * parseFloat(formData.discount) / 100)).toFixed(2)}</span>
+                    </p>
+                  )}
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Discount Type</label>
@@ -223,43 +297,10 @@ export default function AddProductPage() {
           <div className="w-full lg:w-[400px] flex flex-col gap-6">
             
             {/* Upload Img Card */}
-            <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
-              <h3 className="text-base font-semibold text-gray-800 mb-6">Upload Img URLs</h3>
-              
-              <div className="bg-[#F8F9FA] rounded-2xl aspect-square mb-4 relative overflow-hidden flex items-center justify-center border border-gray-100">
-                {mainImage ? (
-                  <Image src={mainImage} alt="Main preview" fill className="object-cover" />
-                ) : (
-                  <div className="text-gray-400 flex flex-col items-center">
-                    <ImageIcon size={48} className="mb-2 opacity-50" />
-                    <span className="text-sm">Preview</span>
-                  </div>
-                )}
-              </div>
-              
-              <div className="flex gap-3 mb-6 overflow-x-auto pb-2">
-                {imagesList.slice(0, 3).map((img, idx) => (
-                  <div key={idx} className="w-16 h-16 rounded-lg border border-gray-200 relative overflow-hidden shrink-0">
-                    <Image src={img} alt={`Thumb ${idx}`} fill className="object-cover" />
-                  </div>
-                ))}
-                
-                <div className="w-16 h-16 rounded-lg border border-dashed border-brand-champagne/50 flex items-center justify-center text-brand-champagne bg-brand-champagne/5 shrink-0 cursor-pointer hover:bg-brand-champagne/10 transition-colors">
-                  <Plus size={20} />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-xs font-medium text-gray-500 mb-2">Image URLs (comma separated)</label>
-                <textarea 
-                  value={formData.images}
-                  onChange={(e) => setFormData({...formData, images: e.target.value})}
-                  className="w-full bg-[#F8F9FA] rounded-xl p-3.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-brand-champagne/50"
-                  placeholder="https://image1.jpg, https://image2.jpg"
-                  rows={2}
-                />
-              </div>
-            </div>
+            <ImageUploader 
+              images={imagesList}
+              onChange={(newImages) => setFormData({...formData, images: newImages.join(',')})}
+            />
 
             {/* Category Card */}
             <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
@@ -279,6 +320,20 @@ export default function AddProductPage() {
                 </select>
               </div>
 
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-700 mb-2">Collection</label>
+                <select 
+                  value={formData.collection}
+                  onChange={(e) => setFormData({...formData, collection: e.target.value})}
+                  className="w-full bg-[#F8F9FA] rounded-xl p-3.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-brand-champagne/50 appearance-none"
+                >
+                  <option value="">None</option>
+                  <option value="The SN24 Capsule">The SN24 Capsule</option>
+                  <option value="The Midnight Navy Edit">The Midnight Navy Edit</option>
+                  <option value="Soft White Minimalism">Soft White Minimalism</option>
+                </select>
+              </div>
+
               <button type="button" className="bg-brand-champagne/20 text-brand-midnight text-sm font-medium px-5 py-2.5 rounded-full hover:bg-brand-champagne/30 transition-colors">
                 Add Category
               </button>
@@ -288,9 +343,49 @@ export default function AddProductPage() {
           
         </div>
       </form>
+
+      {/* Preview Modal */}
+      {isPreviewing && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 p-4 sm:p-8 backdrop-blur-sm">
+          <div className="bg-brand-softwhite w-full max-w-[1400px] h-full max-h-[90vh] rounded-2xl shadow-2xl overflow-y-auto relative animate-in fade-in zoom-in-95 duration-200">
+            {/* Modal Header */}
+            <div className="sticky top-0 z-10 flex items-center justify-between px-6 py-4 bg-white border-b border-gray-200">
+              <h2 className="text-lg font-display font-semibold text-brand-midnight">Product Preview</h2>
+              <button 
+                onClick={() => setIsPreviewing(false)}
+                className="p-2 text-gray-500 hover:bg-gray-100 rounded-full transition-colors"
+              >
+                <X size={20} />
+              </button>
+            </div>
+            
+            {/* Modal Content (Storefront look) */}
+            <div className="p-6 md:p-10">
+              <div className="flex flex-col lg:flex-row gap-12 lg:gap-8">
+                <div className="w-full lg:w-[55%] xl:w-[60%]">
+                  <ProductGallery images={imagesList.length > 0 ? imagesList : ["https://placehold.co/800x1000/F8F9FA/A0AEC0?text=No+Image"]} productName={formData.name || "Preview Product"} />
+                </div>
+                <div className="w-full lg:w-[45%] xl:w-[40%]">
+                  <ProductInfo product={{
+                    ...formData,
+                    id: "preview-id",
+                    price: parseFloat(formData.price) || 0,
+                    originalPrice: null,
+                    images: imagesList.length > 0 ? imagesList : ["https://placehold.co/800x1000"],
+                    colors: formData.colors ? formData.colors.split(',').map(s => s.trim()).filter(Boolean) : [],
+                    sizes: formData.sizes ? formData.sizes.split(',').map(s => s.trim()).filter(Boolean) : [],
+                    type: "Outerwear",
+                    isNew: true,
+                    isBestseller: false,
+                    createdAt: new Date(),
+                    updatedAt: new Date()
+                  } as any} />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
-
-// Ensure you import Package icon at the top if you use it in the header
-import { Package } from "lucide-react";

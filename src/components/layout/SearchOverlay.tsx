@@ -6,6 +6,7 @@ import { Search, X } from "lucide-react";
 import { mockProducts, Product } from "@/data/mockProducts";
 import Image from "next/image";
 import Link from "next/link";
+import { useCurrency } from "@/context/CurrencyContext";
 
 interface SearchOverlayProps {
   isOpen: boolean;
@@ -15,6 +16,7 @@ interface SearchOverlayProps {
 export default function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<Product[]>([]);
+  const { formatPrice } = useCurrency();
 
   useEffect(() => {
     if (query.trim().length > 1) {
@@ -126,7 +128,7 @@ export default function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                         />
                       </div>
                       <h4 className="font-medium text-sm text-brand-charcoal truncate">{product.name}</h4>
-                      <p className="text-brand-graphite text-xs mt-1">${product.price}</p>
+                      <p className="text-brand-graphite text-xs mt-1">{formatPrice(product.price)}</p>
                     </Link>
                   ))}
                 </motion.div>

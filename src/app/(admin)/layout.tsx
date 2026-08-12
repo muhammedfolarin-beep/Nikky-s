@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
-import Image from "next/image";
+import AdminProfileDropdown from "./AdminProfileDropdown";
 import { 
   LayoutDashboard, Package, ShoppingBag, Users, LogOut, 
   CreditCard, RefreshCw, FileText, CornerUpLeft, 
@@ -18,7 +18,7 @@ export default async function AdminLayout({
   const session = await getServerSession(authOptions);
 
   if (!session?.user?.email) {
-    redirect("/login");
+    redirect("/admin-login");
   }
 
   // Check if user is admin
@@ -139,15 +139,11 @@ export default async function AdminLayout({
               </div>
             </div>
             
-            <div className="flex items-center gap-3 pl-4 border-l border-gray-200">
-              <div className="text-right hidden md:block">
-                <p className="text-sm font-medium text-gray-800">{user?.name || "Nikky Admin"}</p>
-                <p className="text-xs text-gray-500">Manager</p>
-              </div>
-              <div className="w-10 h-10 rounded-full bg-gray-200 overflow-hidden relative border border-gray-300">
-                <Image src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=100&auto=format&fit=crop" alt="Profile" fill className="object-cover" />
-              </div>
-            </div>
+            <AdminProfileDropdown 
+              name={user?.name || "Nikky Admin"} 
+              role={user?.role || "Manager"}
+              imageUrl={session.user?.image}
+            />
           </div>
         </header>
 

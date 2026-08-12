@@ -5,6 +5,7 @@ import { Product } from "@/data/mockProducts";
 import { motion, AnimatePresence } from "framer-motion";
 import { Heart, ChevronDown, Minus, Plus, ShoppingBag } from "lucide-react";
 import { useCart } from "@/context/CartContext";
+import { useCurrency } from "@/context/CurrencyContext";
 
 interface ProductInfoProps {
   product: Product;
@@ -16,6 +17,7 @@ export default function ProductInfo({ product }: ProductInfoProps) {
   const [quantity, setQuantity] = useState(1);
   const [expandedSection, setExpandedSection] = useState<string | null>("description");
   const { addItem } = useCart();
+  const { formatPrice } = useCurrency();
 
   const toggleSection = (section: string) => {
     setExpandedSection(prev => prev === section ? null : section);
@@ -41,11 +43,11 @@ export default function ProductInfo({ product }: ProductInfoProps) {
         </h1>
         <div className="flex items-center gap-4">
           <span className="font-sans text-2xl font-medium text-brand-midnight">
-            ${product.price}
+            {formatPrice(product.price)}
           </span>
           {product.originalPrice && (
             <span className="font-sans text-lg text-brand-graphite line-through">
-              ${product.originalPrice}
+              {formatPrice(product.originalPrice)}
             </span>
           )}
         </div>
@@ -174,7 +176,7 @@ export default function ProductInfo({ product }: ProductInfoProps) {
           isOpen={expandedSection === "shipping"}
           onClick={() => toggleSection("shipping")}
         >
-          <p className="mb-2">Complimentary standard shipping on all orders over $200. Express shipping available at checkout.</p>
+          <p className="mb-2">Complimentary standard shipping on all orders over {formatPrice(200)}. Express shipping available at checkout.</p>
           <p>Enjoy free returns within 30 days of receiving your order. Items must be in original condition with tags attached.</p>
         </AccordionItem>
       </div>
