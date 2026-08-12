@@ -49,7 +49,7 @@ export default async function AdminCustomersPage() {
                   </td>
                   <td className="p-4 text-right">
                     {customer.role !== 'ADMIN' && (
-                      <DeleteCustomerButton customerId={customer.id} customerName={customer.name || customer.email} />
+                      <DeleteCustomerButton customerId={customer.id} customerName={customer.name || customer.email || "Unknown User"} />
                     )}
                   </td>
                 </tr>
