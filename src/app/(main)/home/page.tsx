@@ -59,11 +59,11 @@ const collectionPills = [
 ];
 
 const instagramFeed = [
-  "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=600&auto=format&fit=crop",
-  "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=600&auto=format&fit=crop",
-  "https://images.unsplash.com/photo-1584916201218-f4242ceb4809?q=80&w=600&auto=format&fit=crop",
-  "https://images.unsplash.com/photo-1515347619362-747da441229a?q=80&w=600&auto=format&fit=crop",
-  "https://images.unsplash.com/photo-1469334031218-e382a71b716b?q=80&w=600&auto=format&fit=crop"
+  "/download (7).jpg",
+  "/download (8).jpg",
+  "/download (9).jpg",
+  "/🤎 Chocolate Brown Satin Blouse Outfit Inspiration.jpg",
+  "/uploads/1786550558712-download__6_.jpg"
 ];
 
 export default function Home() {
