@@ -24,7 +24,7 @@ export default async function AdminLayout({
   // Check if user is admin
   const user = await prisma.user.findUnique({
     where: { email: session.user.email },
-    select: { role: true }
+    select: { role: true, name: true }
   });
 
   if (user?.role !== "ADMIN") {
