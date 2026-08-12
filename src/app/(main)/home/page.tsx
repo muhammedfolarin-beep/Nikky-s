@@ -523,7 +523,7 @@ export default function Home() {
          <h2 className="font-display text-4xl md:text-5xl font-semibold text-brand-midnight mb-12">Follow us for daily lifestyle</h2>
          <div className="grid grid-cols-2 md:grid-cols-5 w-full mx-auto gap-0">
            {instagramFeed.map((img, idx) => (
-              <div key={idx} className="relative aspect-square w-full group overflow-hidden cursor-pointer">
+              <div key={idx} className="relative aspect-[3/4] w-full group overflow-hidden cursor-pointer">
                  <Image src={img} alt={`Instagram feed ${idx}`} fill className="object-cover transition-transform duration-700 group-hover:scale-110" />
                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300 flex items-center justify-center">
                     <svg 
