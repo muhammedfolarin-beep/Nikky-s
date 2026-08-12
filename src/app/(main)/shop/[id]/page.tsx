@@ -67,7 +67,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
           
           {/* Left: Image Gallery */}
           <div className="w-full lg:w-[55%] xl:w-[60%]">
-            <ProductGallery images={product.images} productName={product.name} />
+            <ProductGallery images={product.images.startsWith('[') ? JSON.parse(product.images) : [product.images]} productName={product.name} />
           </div>
           
           {/* Right: Product Info & Actions */}
