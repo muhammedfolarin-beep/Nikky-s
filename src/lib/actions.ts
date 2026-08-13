@@ -137,7 +137,9 @@ export async function updateOrderStatus(orderId: string, status: string) {
 
 export async function getStoreSettings() {
   try {
-    let settings = await prisma.storeSetting.findFirst();
+    let settings = await prisma.storeSetting.findFirst({
+      orderBy: { updatedAt: "desc" }
+    });
     if (!settings) {
       settings = await prisma.storeSetting.create({
         data: {
@@ -157,7 +159,9 @@ export async function getStoreSettings() {
 
 export async function updateStoreSettings(data: any) {
   try {
-    let settings = await prisma.storeSetting.findFirst();
+    let settings = await prisma.storeSetting.findFirst({
+      orderBy: { updatedAt: "desc" }
+    });
     if (settings) {
       settings = await prisma.storeSetting.update({
         where: { id: settings.id },

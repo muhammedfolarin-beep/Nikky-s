@@ -71,7 +71,7 @@ export default function ProductListClient({ products }: { products: any[] }) {
           </thead>
           <tbody className="divide-y divide-gray-200">
             {filteredProducts.map(product => {
-              const images = product.images.split(",");
+              const images = Array.isArray(product.images) ? product.images : (typeof product.images === 'string' ? product.images.split(",") : []);
               return (
                 <tr key={product.id} className="hover:bg-gray-50">
                   <td className="p-4 flex items-center gap-4">

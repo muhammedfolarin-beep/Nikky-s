@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { writeFile, mkdir } from "fs/promises";
-import path from "path";
-import { existsSync } from "fs";
+import { createClient } from "@supabase/supabase-js";
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 export async function POST(request: NextRequest) {
   try {
@@ -12,24 +14,29 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "No files uploaded" }, { status: 400 });
     }
 
-    const uploadDir = path.join(process.cwd(), "public/uploads");
-    
-    // Ensure the uploads directory exists
-    if (!existsSync(uploadDir)) {
-      await mkdir(uploadDir, { recursive: true });
-    }
-
     const filePaths = [];
 
     for (const file of files) {
-      const buffer = Buffer.from(await file.arrayBuffer());
       const uniqueName = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.-]/g, "_")}`;
-      const filePath = path.join(uploadDir, uniqueName);
       
-      await writeFile(filePath, buffer);
-      
-      // Store the public URL path
-      filePaths.push(`/uploads/${uniqueName}`);
+      const { data, error } = await supabase.storage
+        .from("uploads")
+        .upload(uniqueName, file, {
+          cacheControl: "3600",
+          upsert: false,
+        });
+
+      if (error) {
+        console.error("Supabase upload error:", error);
+        throw error;
+      }
+
+      // Get public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from("uploads")
+        .getPublicUrl(uniqueName);
+
+      filePaths.push(publicUrl);
     }
 
     return NextResponse.json({ success: true, filePaths });

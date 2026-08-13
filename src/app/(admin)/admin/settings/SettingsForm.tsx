@@ -25,15 +25,13 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
     
     if (result.success) {
       setMessage("Settings saved successfully!");
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
     } else {
       setMessage(result.error || "Failed to save settings");
     }
     setIsSubmitting(false);
-    
-    // Clear success message after 3 seconds
-    if (result.success) {
-      setTimeout(() => setMessage(""), 3000);
-    }
   };
 
   return (

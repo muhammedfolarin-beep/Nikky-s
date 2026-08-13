@@ -14,7 +14,7 @@ import { useCurrency } from "@/context/CurrencyContext";
 export default function EditProductForm({ product }: { product: any }) {
   const router = useRouter();
   const { currency, exchangeRate, isLoading } = useCurrency();
-  const currencySymbol = currency === 'NGN' ? '₦' : '$';
+  const currencySymbol = currency === 'NGN' ? '₦' : currency === 'EUR' ? '€' : currency === 'GBP' ? '£' : '$';
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isPreviewing, setIsPreviewing] = useState(false);
   const [error, setError] = useState("");

@@ -14,7 +14,7 @@ import { useCurrency } from "@/context/CurrencyContext";
 export default function AddProductPage() {
   const router = useRouter();
   const { currency, exchangeRate } = useCurrency();
-  const currencySymbol = currency === 'NGN' ? '₦' : '$';
+  const currencySymbol = currency === 'NGN' ? '₦' : currency === 'EUR' ? '€' : currency === 'GBP' ? '£' : '$';
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isPreviewing, setIsPreviewing] = useState(false);
   const [error, setError] = useState("");
