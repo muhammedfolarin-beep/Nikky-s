@@ -194,6 +194,7 @@ export async function updateStoreSettings(data: any) {
         }
       });
     }
+    revalidatePath("/", "layout");
     return { success: true, settings };
   } catch (error) {
     console.error("Error updating settings:", error);

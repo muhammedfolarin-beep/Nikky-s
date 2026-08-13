@@ -16,6 +16,7 @@ export default function ProductInfo({ product }: ProductInfoProps) {
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [expandedSection, setExpandedSection] = useState<string | null>("description");
+  const [isLiked, setIsLiked] = useState(false);
   const { addItem } = useCart();
   const { formatPrice } = useCurrency();
 
@@ -145,10 +146,16 @@ export default function ProductInfo({ product }: ProductInfoProps) {
         </button>
 
         <button 
-          className="w-14 h-14 shrink-0 rounded-full border border-brand-stone flex items-center justify-center text-brand-charcoal hover:border-brand-champagne hover:text-brand-champagne transition-colors"
-          title="Add to Wishlist"
+          onClick={() => setIsLiked(!isLiked)}
+          className={`w-14 h-14 shrink-0 rounded-full border flex items-center justify-center transition-colors
+            ${isLiked 
+              ? 'border-red-500 text-red-500 bg-red-50' 
+              : 'border-brand-stone text-brand-charcoal hover:border-brand-champagne hover:text-brand-champagne'
+            }
+          `}
+          title={isLiked ? "Remove from Wishlist" : "Add to Wishlist"}
         >
-          <Heart size={20} />
+          <Heart size={20} className={isLiked ? "fill-current" : ""} />
         </button>
       </div>
 
