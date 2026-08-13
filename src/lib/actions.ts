@@ -8,12 +8,7 @@ export async function getProducts() {
     const products = await prisma.product.findMany({
       orderBy: { createdAt: "desc" },
     });
-    return products.map(product => ({
-      ...product,
-      colors: product.colors.split(','),
-      sizes: product.sizes.split(','),
-      images: product.images.split(','),
-    }));
+    return products;
   } catch (error) {
     console.error("Error fetching products:", error);
     return [];
@@ -24,12 +19,6 @@ export async function getProductById(id: string): Promise<any> {
   const product = await prisma.product.findUnique({
     where: { id },
   });
-  
-  if (product) {
-    product.images = product.images.split(',') as any;
-    product.colors = product.colors.split(',') as any;
-    product.sizes = product.sizes.split(',') as any;
-  }
   
   return product;
 }
@@ -71,12 +60,7 @@ export async function getProductsByCollection(collection: string) {
     const products = await prisma.product.findMany({
       where: { collection },
     });
-    return products.map(product => ({
-      ...product,
-      colors: product.colors.split(','),
-      sizes: product.sizes.split(','),
-      images: product.images.split(','),
-    }));
+    return products;
   } catch (error) {
     console.error(`Error fetching products for collection ${collection}:`, error);
     return [];
@@ -93,9 +77,9 @@ export async function createProduct(data: any) {
         originalPrice: data.originalPrice ? parseFloat(data.originalPrice) : null,
         category: data.category,
         type: data.type || "Outerwear",
-        colors: data.colors,
-        sizes: data.sizes,
-        images: data.images,
+        colors: Array.isArray(data.colors) ? data.colors : data.colors.split(','),
+        sizes: Array.isArray(data.sizes) ? data.sizes : data.sizes.split(','),
+        images: Array.isArray(data.images) ? data.images : data.images.split(','),
         isNew: data.isNew === 'true',
         isBestseller: data.isBestseller === 'true',
         description: data.description,
@@ -104,7 +88,7 @@ export async function createProduct(data: any) {
         collection: data.collection,
       }
     });
-    revalidatePath("/admin/products");
+    revalidatePath("/", "layout");
     return { success: true, product };
   } catch (error) {
     console.error("Error creating product:", error);
@@ -121,14 +105,14 @@ export async function updateProduct(id: string, data: any) {
         price: parseFloat(data.price),
         originalPrice: data.originalPrice ? parseFloat(data.originalPrice) : null,
         category: data.category,
-        colors: data.colors,
-        sizes: data.sizes,
-        images: data.images,
+        colors: Array.isArray(data.colors) ? data.colors : data.colors.split(','),
+        sizes: Array.isArray(data.sizes) ? data.sizes : data.sizes.split(','),
+        images: Array.isArray(data.images) ? data.images : data.images.split(','),
         description: data.description,
         collection: data.collection,
       }
     });
-    revalidatePath("/admin/products");
+    revalidatePath("/", "layout");
     return { success: true, product };
   } catch (error) {
     console.error("Error updating product:", error);
@@ -142,6 +126,8 @@ export async function updateOrderStatus(orderId: string, status: string) {
       where: { id: orderId },
       data: { status }
     });
+    revalidatePath("/account");
+    revalidatePath("/admin/orders");
     return { success: true };
   } catch (error) {
     console.error("Error updating order:", error);
@@ -239,7 +225,7 @@ export async function deleteProduct(id: string) {
     await prisma.product.delete({
       where: { id }
     });
-    revalidatePath("/admin/products");
+    revalidatePath("/", "layout");
     return { success: true };
   } catch (error) {
     console.error("Error deleting product:", error);

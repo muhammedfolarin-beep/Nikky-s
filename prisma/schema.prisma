@@ -26,9 +26,9 @@ model Product {
   originalPrice    Float?
   category         String
   type             String?
-  colors           String // Stored as comma-separated hex codes
-  sizes            String // Stored as comma-separated values
-  images           String // Stored as comma-separated URLs
+  colors           String[] // Stored as array of hex codes
+  sizes            String[] // Stored as array of sizes
+  images           String[] // Stored as array of URLs
   isNew            Boolean  @default(false)
   isBestseller     Boolean  @default(false)
   description      String?

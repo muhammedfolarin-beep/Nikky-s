@@ -14,12 +14,7 @@ export default async function NewArrivalsPage() {
   });
 
   // format for the ProductCard
-  const formattedProducts = newProducts.map(product => ({
-    ...product,
-    colors: product.colors.split(','),
-    sizes: product.sizes.split(','),
-    images: product.images.split(',')
-  }));
+  const formattedProducts = newProducts;
 
   return (
     <div className="min-h-screen bg-brand-softwhite">

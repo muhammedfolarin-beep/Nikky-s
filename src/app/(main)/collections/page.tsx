@@ -37,7 +37,7 @@ export default async function CollectionsPage() {
   const derivedCollections = collections.map(collection => {
     const productsInCol = allProducts.filter(p => p.collection === collection.name);
     const colImage = productsInCol.length > 0 && productsInCol[0].images?.length > 0 
-      ? productsInCol[0].images.split(',')[0] 
+      ? productsInCol[0].images[0] 
       : collection.image;
     return { ...collection, image: colImage };
   });
