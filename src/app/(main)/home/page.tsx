@@ -519,24 +519,16 @@ export default function Home() {
       </section>
 
       {/* Instagram Feed Section */}
-      <section className="w-full py-24 bg-brand-snow text-center">
+      <section className="w-full py-24 bg-brand-snow text-center overflow-hidden">
          <h2 className="font-display text-4xl md:text-5xl font-semibold text-brand-midnight mb-12">Follow us for daily lifestyle</h2>
-         <div className="grid grid-cols-2 md:grid-cols-5 w-full mx-auto gap-0">
+         
+         {/* Desktop Grid */}
+         <div className="hidden md:grid md:grid-cols-5 w-full mx-auto gap-0">
            {instagramFeed.map((img, idx) => (
               <div key={idx} className="relative aspect-[3/4] w-full group overflow-hidden cursor-pointer">
                  <Image src={img} alt={`Instagram feed ${idx}`} fill className="object-cover transition-transform duration-700 group-hover:scale-110" />
                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300 flex items-center justify-center">
-                    <svg 
-                      className="text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 transform scale-50 group-hover:scale-100" 
-                      width="32" 
-                      height="32" 
-                      viewBox="0 0 24 24" 
-                      fill="none" 
-                      stroke="currentColor" 
-                      strokeWidth="1.5" 
-                      strokeLinecap="round" 
-                      strokeLinejoin="round"
-                    >
+                    <svg className="text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 transform scale-50 group-hover:scale-100" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                       <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
                       <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
                       <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
@@ -544,6 +536,28 @@ export default function Home() {
                  </div>
               </div>
            ))}
+         </div>
+
+         {/* Mobile Auto-Slider */}
+         <div className="md:hidden flex w-full">
+           <motion.div 
+             animate={{ x: ["0%", "-50%"] }}
+             transition={{ repeat: Infinity, ease: "linear", duration: 15 }}
+             className="flex"
+           >
+             {[...instagramFeed, ...instagramFeed].map((img, idx) => (
+               <div key={idx} className="relative aspect-[3/4] w-[50vw] shrink-0 group overflow-hidden cursor-pointer">
+                 <Image src={img} alt={`Instagram feed ${idx}`} fill className="object-cover" />
+                 <div className="absolute inset-0 bg-black/0 active:bg-black/20 transition-colors duration-300 flex items-center justify-center">
+                    <svg className="text-white opacity-0 active:opacity-100 transition-opacity duration-300" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                      <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                    </svg>
+                 </div>
+               </div>
+             ))}
+           </motion.div>
          </div>
       </section>
 
