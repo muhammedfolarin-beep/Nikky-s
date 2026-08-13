@@ -150,16 +150,16 @@ export default function CheckoutPage() {
                   {error && step === 1 && (
                     <div className="text-red-500 text-sm bg-red-50 p-3 rounded-md mb-4">{error}</div>
                   )}
-                  <div className="grid grid-cols-2 gap-4">
-                    <input value={formData.firstName} onChange={(e) => setFormData({...formData, firstName: e.target.value})} type="text" placeholder="First Name" className="w-full bg-transparent border-b border-brand-stone py-2 text-brand-charcoal placeholder:text-gray-400 focus:outline-none focus:border-brand-champagne" />
-                    <input value={formData.lastName} onChange={(e) => setFormData({...formData, lastName: e.target.value})} type="text" placeholder="Last Name" className="w-full bg-transparent border-b border-brand-stone py-2 text-brand-charcoal placeholder:text-gray-400 focus:outline-none focus:border-brand-champagne" />
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <input value={formData.firstName} onChange={(e) => setFormData({...formData, firstName: e.target.value})} type="text" placeholder="First Name" className="w-full bg-transparent border-b border-brand-stone py-3 text-brand-charcoal placeholder:text-gray-400 focus:outline-none focus:border-brand-champagne transition-colors" />
+                    <input value={formData.lastName} onChange={(e) => setFormData({...formData, lastName: e.target.value})} type="text" placeholder="Last Name" className="w-full bg-transparent border-b border-brand-stone py-3 text-brand-charcoal placeholder:text-gray-400 focus:outline-none focus:border-brand-champagne transition-colors" />
                   </div>
-                  <input value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} type="email" placeholder="Email Address" className="w-full bg-transparent border-b border-brand-stone py-2 text-brand-charcoal placeholder:text-gray-400 focus:outline-none focus:border-brand-champagne" />
-                  <input value={formData.address} onChange={(e) => setFormData({...formData, address: e.target.value})} type="text" placeholder="Street Address" className="w-full bg-transparent border-b border-brand-stone py-2 text-brand-charcoal placeholder:text-gray-400 focus:outline-none focus:border-brand-champagne mt-4" />
-                  <div className="grid grid-cols-3 gap-4">
-                    <input value={formData.city} onChange={(e) => setFormData({...formData, city: e.target.value})} type="text" placeholder="City" className="col-span-1 w-full bg-transparent border-b border-brand-stone py-2 text-brand-charcoal placeholder:text-gray-400 focus:outline-none focus:border-brand-champagne" />
-                    <input value={formData.state} onChange={(e) => setFormData({...formData, state: e.target.value})} type="text" placeholder="State/Province" className="col-span-1 w-full bg-transparent border-b border-brand-stone py-2 text-brand-charcoal placeholder:text-gray-400 focus:outline-none focus:border-brand-champagne" />
-                    <input value={formData.zip} onChange={(e) => setFormData({...formData, zip: e.target.value})} type="text" placeholder="ZIP Code" className="col-span-1 w-full bg-transparent border-b border-brand-stone py-2 text-brand-charcoal placeholder:text-gray-400 focus:outline-none focus:border-brand-champagne" />
+                  <input value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} type="email" placeholder="Email Address" className="w-full bg-transparent border-b border-brand-stone py-3 text-brand-charcoal placeholder:text-gray-400 focus:outline-none focus:border-brand-champagne transition-colors mt-2" />
+                  <input value={formData.address} onChange={(e) => setFormData({...formData, address: e.target.value})} type="text" placeholder="Street Address" className="w-full bg-transparent border-b border-brand-stone py-3 text-brand-charcoal placeholder:text-gray-400 focus:outline-none focus:border-brand-champagne transition-colors mt-4" />
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4">
+                    <input value={formData.city} onChange={(e) => setFormData({...formData, city: e.target.value})} type="text" placeholder="City" className="col-span-1 w-full bg-transparent border-b border-brand-stone py-3 text-brand-charcoal placeholder:text-gray-400 focus:outline-none focus:border-brand-champagne transition-colors" />
+                    <input value={formData.state} onChange={(e) => setFormData({...formData, state: e.target.value})} type="text" placeholder="State/Province" className="col-span-1 w-full bg-transparent border-b border-brand-stone py-3 text-brand-charcoal placeholder:text-gray-400 focus:outline-none focus:border-brand-champagne transition-colors" />
+                    <input value={formData.zip} onChange={(e) => setFormData({...formData, zip: e.target.value})} type="text" placeholder="ZIP Code" className="col-span-1 w-full bg-transparent border-b border-brand-stone py-3 text-brand-charcoal placeholder:text-gray-400 focus:outline-none focus:border-brand-champagne transition-colors" />
                   </div>
                   
                   <div className="pt-6">
@@ -210,19 +210,19 @@ export default function CheckoutPage() {
                     </div>
 
                     {formData.paymentMethod === 'card' && (
-                      <div className="space-y-4 pl-7 border-l-2 border-brand-stone ml-2">
-                        <input value={formData.nameOnCard} onChange={(e) => setFormData({...formData, nameOnCard: e.target.value})} type="text" placeholder="Name on Card" className="w-full bg-transparent border-b border-brand-stone py-2 text-brand-charcoal placeholder:text-gray-400 focus:outline-none focus:border-brand-champagne" />
+                      <div className="space-y-4 pl-4 sm:pl-7 border-l-2 border-brand-stone ml-2">
+                        <input value={formData.nameOnCard} onChange={(e) => setFormData({...formData, nameOnCard: e.target.value})} type="text" placeholder="Name on Card" className="w-full bg-transparent border-b border-brand-stone py-3 text-brand-charcoal placeholder:text-gray-400 focus:outline-none focus:border-brand-champagne transition-colors" />
                         <div className="relative">
-                          <input value={formData.cardNumber} onChange={(e) => setFormData({...formData, cardNumber: e.target.value.replace(/\D/g, '')})} type="text" placeholder="Card Number" maxLength={19} className="w-full bg-transparent border-b border-brand-stone py-2 text-brand-charcoal placeholder:text-gray-400 focus:outline-none focus:border-brand-champagne" />
+                          <input value={formData.cardNumber} onChange={(e) => setFormData({...formData, cardNumber: e.target.value.replace(/\D/g, '')})} type="text" placeholder="Card Number" maxLength={19} className="w-full bg-transparent border-b border-brand-stone py-3 text-brand-charcoal placeholder:text-gray-400 focus:outline-none focus:border-brand-champagne transition-colors" />
                           {getCardType(formData.cardNumber) && (
-                            <span className="absolute right-0 top-2 text-xs font-medium bg-brand-stone/30 px-2 py-1 rounded text-brand-midnight">
+                            <span className="absolute right-0 top-3 text-xs font-medium bg-brand-stone/30 px-2 py-1 rounded text-brand-midnight">
                               {getCardType(formData.cardNumber)}
                             </span>
                           )}
                         </div>
-                        <div className="grid grid-cols-2 gap-4">
-                          <input value={formData.expiry} onChange={(e) => setFormData({...formData, expiry: e.target.value})} type="text" placeholder="MM/YY" maxLength={5} className="w-full bg-transparent border-b border-brand-stone py-2 text-brand-charcoal placeholder:text-gray-400 focus:outline-none focus:border-brand-champagne" />
-                          <input value={formData.cvc} onChange={(e) => setFormData({...formData, cvc: e.target.value.replace(/\D/g, '')})} type="password" placeholder="CVC" maxLength={4} className="w-full bg-transparent border-b border-brand-stone py-2 text-brand-charcoal placeholder:text-gray-400 focus:outline-none focus:border-brand-champagne" />
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <input value={formData.expiry} onChange={(e) => setFormData({...formData, expiry: e.target.value})} type="text" placeholder="MM/YY" maxLength={5} className="w-full bg-transparent border-b border-brand-stone py-3 text-brand-charcoal placeholder:text-gray-400 focus:outline-none focus:border-brand-champagne transition-colors" />
+                          <input value={formData.cvc} onChange={(e) => setFormData({...formData, cvc: e.target.value.replace(/\D/g, '')})} type="password" placeholder="CVC" maxLength={4} className="w-full bg-transparent border-b border-brand-stone py-3 text-brand-charcoal placeholder:text-gray-400 focus:outline-none focus:border-brand-champagne transition-colors" />
                         </div>
                       </div>
                     )}

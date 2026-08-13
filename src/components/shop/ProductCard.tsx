@@ -20,7 +20,7 @@ export default function ProductCard({ product }: ProductCardProps) {
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-50px" }}
-      transition={{ duration: 0.5, ease: "easeOut" }}
+      transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
       className="group flex flex-col gap-3 cursor-pointer"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -42,7 +42,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           src={product.images[0]}
           alt={product.name}
           fill
-          className={`object-cover transition-transform duration-700 ease-[cubic-bezier(0.25,1,0.5,1)] ${isHovered ? 'scale-105 opacity-0' : 'scale-100 opacity-100'}`}
+          className={`object-cover transition-transform duration-700 ease-[0.22,1,0.36,1] ${isHovered ? 'scale-105 opacity-0' : 'scale-100 opacity-100'}`}
           sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
         />
         
@@ -52,7 +52,7 @@ export default function ProductCard({ product }: ProductCardProps) {
             src={product.images[1]}
             alt={`${product.name} alternate view`}
             fill
-            className={`object-cover absolute inset-0 transition-all duration-700 ease-[cubic-bezier(0.25,1,0.5,1)] ${isHovered ? 'scale-105 opacity-100' : 'scale-100 opacity-0'}`}
+            className={`object-cover absolute inset-0 transition-all duration-700 ease-[0.22,1,0.36,1] ${isHovered ? 'scale-105 opacity-100' : 'scale-100 opacity-0'}`}
             sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
           />
         )}
@@ -70,11 +70,11 @@ export default function ProductCard({ product }: ProductCardProps) {
         <p className="font-sans text-xs text-brand-graphite">{product.brand}</p>
         
         {/* Color Swatches */}
-        <div className="flex gap-1.5 mt-1">
+        <div className="flex gap-2 mt-2">
           {product.colors.map((color, idx) => (
             <div 
               key={idx} 
-              className="w-3 h-3 rounded-full border border-brand-stone/50 shadow-sm"
+              className="w-4 h-4 sm:w-3 sm:h-3 rounded-full border border-brand-stone/50 shadow-sm"
               style={{ backgroundColor: color }}
               title={`Color option ${idx + 1}`}
             />
