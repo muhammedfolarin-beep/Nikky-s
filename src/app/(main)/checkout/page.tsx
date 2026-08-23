@@ -9,7 +9,9 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { processOrder } from "@/lib/actions";
 import { useSession } from "next-auth/react";
-import { usePaystackPayment } from 'react-paystack';
+import dynamic from 'next/dynamic';
+
+const PaystackButton = dynamic(() => import('@/components/checkout/PaystackCheckoutButton'), { ssr: false });
 
 export default function CheckoutPage() {
   const { items, subtotal, clearCart } = useCart();
@@ -86,44 +88,31 @@ export default function CheckoutPage() {
     currency: currency,
   };
 
-  const initializePayment = usePaystackPayment(config);
-
-  const handlePlaceOrder = () => {
+  const onSuccess = async (reference: any) => {
     setIsProcessing(true);
-    
-    if (!process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY) {
-      setError("Payment gateway is not configured. Please add NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY to your .env file.");
+    // Process the actual order in the database
+    const result = await processOrder({
+      totalAmount: total,
+      shippingName: `${formData.firstName} ${formData.lastName}`,
+      shippingEmail: formData.email,
+      shippingAddress: formData.address,
+      shippingCity: formData.city,
+      shippingState: formData.state,
+      shippingZip: formData.zip,
+      paymentRef: reference.reference || `PAYSTACK-${Date.now()}`
+    }, items);
+
+    if (result.success) {
+      clearCart();
+      router.push("/checkout/success");
+    } else {
+      setError("Failed to save order details. Please contact support with your payment reference.");
       setIsProcessing(false);
-      return;
     }
+  };
 
-    const onSuccess = async (reference: any) => {
-      // Process the actual order in the database
-      const result = await processOrder({
-        totalAmount: total,
-        shippingName: `${formData.firstName} ${formData.lastName}`,
-        shippingEmail: formData.email,
-        shippingAddress: formData.address,
-        shippingCity: formData.city,
-        shippingState: formData.state,
-        shippingZip: formData.zip,
-        paymentRef: reference.reference || `PAYSTACK-${Date.now()}`
-      }, items);
-
-      if (result.success) {
-        clearCart();
-        router.push("/checkout/success");
-      } else {
-        setError("Failed to save order details. Please contact support with your payment reference.");
-        setIsProcessing(false);
-      }
-    };
-
-    const onClose = () => {
-      setIsProcessing(false);
-    };
-
-    initializePayment({ onSuccess, onClose });
+  const onClose = () => {
+    setIsProcessing(false);
   };
 
   return (
@@ -241,13 +230,20 @@ export default function CheckoutPage() {
                   <p className="text-sm text-brand-graphite mb-6">
                     Please review your order details on the right. By placing your order, you agree to Nikky's Terms & Conditions.
                   </p>
-                  <button 
-                    onClick={handlePlaceOrder}
-                    disabled={isProcessing}
-                    className="w-full bg-brand-midnight text-brand-snow py-4 rounded-full font-medium hover:bg-brand-charcoal transition-colors shadow-soft flex justify-center items-center gap-2"
-                  >
-                    {isProcessing ? "Processing..." : `Place Order • ${formatPrice(total)}`}
-                  </button>
+                  
+                  {!process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY ? (
+                    <div className="w-full bg-brand-stone text-brand-charcoal py-4 rounded-full font-medium text-center shadow-soft">
+                      Payment Gateway Not Configured
+                    </div>
+                  ) : (
+                    <PaystackButton 
+                      config={config} 
+                      onSuccess={onSuccess} 
+                      onClose={onClose} 
+                      disabled={isProcessing} 
+                      amountFormatted={formatPrice(total)} 
+                    />
+                  )}
                 </motion.div>
               )}
             </div>
