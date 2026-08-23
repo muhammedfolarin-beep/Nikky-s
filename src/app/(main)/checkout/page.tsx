@@ -9,10 +9,11 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { processOrder } from "@/lib/actions";
 import { useSession } from "next-auth/react";
+import { usePaystackPayment } from 'react-paystack';
 
 export default function CheckoutPage() {
   const { items, subtotal, clearCart } = useCart();
-  const { formatPrice } = useCurrency();
+  const { formatPrice, currency, exchangeRate } = useCurrency();
   const router = useRouter();
   const { status } = useSession({
     required: true,
@@ -31,21 +32,9 @@ export default function CheckoutPage() {
     city: "",
     state: "",
     zip: "",
-    paymentMethod: "card",
-    nameOnCard: "",
-    cardNumber: "",
-    expiry: "",
-    cvc: ""
+    paymentMethod: "paystack"
   });
   const [error, setError] = useState("");
-
-  const getCardType = (number: string) => {
-    if (number.startsWith("4")) return "Visa";
-    if (/^5[1-5]/.test(number)) return "Mastercard";
-    if (/^506[0-1]/.test(number) || /^6500/.test(number) || /^5099/.test(number)) return "Verve";
-    if (number.length > 0) return "Other Card";
-    return "";
-  };
 
   const handleNextStep = (currentStep: number) => {
     setError("");
@@ -56,12 +45,6 @@ export default function CheckoutPage() {
       }
       setStep(2);
     } else if (currentStep === 2) {
-      if (formData.paymentMethod === "card") {
-        if (!formData.nameOnCard || !formData.cardNumber || !formData.expiry || !formData.cvc) {
-          setError("Please fill in all card details before continuing.");
-          return;
-        }
-      }
       setStep(3);
     }
   };
@@ -95,30 +78,52 @@ export default function CheckoutPage() {
     );
   }
 
-  const handlePlaceOrder = async () => {
+  const config = {
+    reference: (new Date()).getTime().toString(),
+    email: formData.email,
+    amount: Math.round(total * exchangeRate * 100), // Lowest denomination
+    publicKey: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY || "",
+    currency: currency,
+  };
+
+  const initializePayment = usePaystackPayment(config);
+
+  const handlePlaceOrder = () => {
     setIsProcessing(true);
     
-    // Process the actual order in the database
-    const result = await processOrder({
-      totalAmount: total,
-      shippingName: `${formData.firstName} ${formData.lastName}`,
-      shippingEmail: formData.email,
-      shippingAddress: formData.address,
-      shippingCity: formData.city,
-      shippingState: formData.state,
-      shippingZip: formData.zip,
-      paymentRef: formData.paymentMethod === 'card' 
-        ? `CARD-${Date.now()}` 
-        : `${formData.paymentMethod.toUpperCase()}-${Date.now()}`
-    }, items);
-
-    if (result.success) {
-      clearCart();
-      router.push("/checkout/success");
-    } else {
-      setError("Failed to process payment. Please try again.");
+    if (!process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY) {
+      setError("Payment gateway is not configured. Please add NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY to your .env file.");
       setIsProcessing(false);
+      return;
     }
+
+    const onSuccess = async (reference: any) => {
+      // Process the actual order in the database
+      const result = await processOrder({
+        totalAmount: total,
+        shippingName: `${formData.firstName} ${formData.lastName}`,
+        shippingEmail: formData.email,
+        shippingAddress: formData.address,
+        shippingCity: formData.city,
+        shippingState: formData.state,
+        shippingZip: formData.zip,
+        paymentRef: reference.reference || `PAYSTACK-${Date.now()}`
+      }, items);
+
+      if (result.success) {
+        clearCart();
+        router.push("/checkout/success");
+      } else {
+        setError("Failed to save order details. Please contact support with your payment reference.");
+        setIsProcessing(false);
+      }
+    };
+
+    const onClose = () => {
+      setIsProcessing(false);
+    };
+
+    initializePayment({ onSuccess, onClose });
   };
 
   return (
@@ -196,36 +201,10 @@ export default function CheckoutPage() {
                   <div className="p-4 border border-brand-stone rounded-lg bg-brand-softwhite">
                     <div className="flex flex-col gap-4 mb-4">
                       <label className="flex items-center gap-3 cursor-pointer">
-                        <input type="radio" name="payment" value="card" checked={formData.paymentMethod === 'card'} onChange={() => setFormData({...formData, paymentMethod: 'card'})} className="accent-brand-midnight" />
-                        <span className="font-medium text-brand-charcoal">Credit/Debit Card <span className="text-xs font-normal text-gray-500">(Visa, Mastercard, Verve)</span></span>
-                      </label>
-                      <label className="flex items-center gap-3 cursor-pointer">
-                        <input type="radio" name="payment" value="opay" checked={formData.paymentMethod === 'opay'} onChange={() => setFormData({...formData, paymentMethod: 'opay'})} className="accent-brand-midnight" />
-                        <span className="font-medium text-brand-charcoal">Opay</span>
-                      </label>
-                      <label className="flex items-center gap-3 cursor-pointer">
-                        <input type="radio" name="payment" value="palmpay" checked={formData.paymentMethod === 'palmpay'} onChange={() => setFormData({...formData, paymentMethod: 'palmpay'})} className="accent-brand-midnight" />
-                        <span className="font-medium text-brand-charcoal">PalmPay</span>
+                        <input type="radio" name="payment" value="paystack" checked={true} readOnly className="accent-brand-midnight" />
+                        <span className="font-medium text-brand-charcoal">Pay with Paystack <span className="text-xs font-normal text-gray-500">(Cards, Transfer, USSD)</span></span>
                       </label>
                     </div>
-
-                    {formData.paymentMethod === 'card' && (
-                      <div className="space-y-4 pl-4 sm:pl-7 border-l-2 border-brand-stone ml-2">
-                        <input value={formData.nameOnCard} onChange={(e) => setFormData({...formData, nameOnCard: e.target.value})} type="text" placeholder="Name on Card" className="w-full bg-transparent border-b border-brand-stone py-3 text-brand-charcoal placeholder:text-gray-400 focus:outline-none focus:border-brand-champagne transition-colors" />
-                        <div className="relative">
-                          <input value={formData.cardNumber} onChange={(e) => setFormData({...formData, cardNumber: e.target.value.replace(/\D/g, '')})} type="text" placeholder="Card Number" maxLength={19} className="w-full bg-transparent border-b border-brand-stone py-3 text-brand-charcoal placeholder:text-gray-400 focus:outline-none focus:border-brand-champagne transition-colors" />
-                          {getCardType(formData.cardNumber) && (
-                            <span className="absolute right-0 top-3 text-xs font-medium bg-brand-stone/30 px-2 py-1 rounded text-brand-midnight">
-                              {getCardType(formData.cardNumber)}
-                            </span>
-                          )}
-                        </div>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                          <input value={formData.expiry} onChange={(e) => setFormData({...formData, expiry: e.target.value})} type="text" placeholder="MM/YY" maxLength={5} className="w-full bg-transparent border-b border-brand-stone py-3 text-brand-charcoal placeholder:text-gray-400 focus:outline-none focus:border-brand-champagne transition-colors" />
-                          <input value={formData.cvc} onChange={(e) => setFormData({...formData, cvc: e.target.value.replace(/\D/g, '')})} type="password" placeholder="CVC" maxLength={4} className="w-full bg-transparent border-b border-brand-stone py-3 text-brand-charcoal placeholder:text-gray-400 focus:outline-none focus:border-brand-champagne transition-colors" />
-                        </div>
-                      </div>
-                    )}
                   </div>
                   
                   <div className="pt-6">
@@ -253,18 +232,10 @@ export default function CheckoutPage() {
                 <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }}>
                   <div className="bg-brand-stone/20 p-5 rounded-lg mb-6 text-sm text-brand-charcoal">
                     <h4 className="font-semibold text-brand-midnight mb-3">Payment Preview</h4>
-                    {formData.paymentMethod === 'card' ? (
-                      <div className="space-y-2">
-                        <p><span className="text-brand-graphite inline-block w-24">Method:</span> Credit/Debit Card</p>
-                        <p><span className="text-brand-graphite inline-block w-24">Card Name:</span> <span className="font-medium">{formData.nameOnCard}</span></p>
-                        <p><span className="text-brand-graphite inline-block w-24">Card Type:</span> <span className="font-medium">{getCardType(formData.cardNumber)}</span></p>
-                        <p><span className="text-brand-graphite inline-block w-24">Card Number:</span> <span className="font-medium tracking-widest">**** **** **** {formData.cardNumber.slice(-4) || "****"}</span></p>
-                      </div>
-                    ) : (
-                      <div className="space-y-2">
-                        <p><span className="text-brand-graphite inline-block w-24">Method:</span> <span className="font-medium">{formData.paymentMethod === 'opay' ? 'Opay (Local Transfer)' : 'PalmPay (Local Transfer)'}</span></p>
-                      </div>
-                    )}
+                    <div className="space-y-2">
+                      <p><span className="text-brand-graphite inline-block w-24">Method:</span> Secure Payment (Paystack)</p>
+                      <p><span className="text-brand-graphite inline-block w-24">Billing:</span> <span className="font-medium">{formData.email}</span></p>
+                    </div>
                   </div>
 
                   <p className="text-sm text-brand-graphite mb-6">

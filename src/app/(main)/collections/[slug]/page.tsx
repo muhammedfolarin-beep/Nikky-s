@@ -5,6 +5,7 @@ import { Metadata } from "next";
 
 interface CollectionPageProps {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
 const collectionData: Record<string, { name: string, bannerImage: string, description: string }> = {
