@@ -10,8 +10,8 @@ datasource db {
 
 model StoreSetting {
   id           String   @id @default(cuid())
-  storeName    String   @default("Nikky's")
-  contactEmail String   @default("hello@nikkys.com")
+  storeName    String   @default("SN24")
+  contactEmail String   @default("hello@sn24.com.ng")
   contactPhone String?
   currency     String   @default("USD")
   timezone     String   @default("UTC")
