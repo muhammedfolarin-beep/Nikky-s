@@ -9,6 +9,7 @@ export interface CartItem {
   quantity: number;
   size: string;
   color: string;
+  customMeasurements?: Record<string, string>;
 }
 
 interface CartContextType {
@@ -16,7 +17,7 @@ interface CartContextType {
   isCartOpen: boolean;
   openCart: () => void;
   closeCart: () => void;
-  addItem: (product: Product, quantity: number, size: string, color: string) => void;
+  addItem: (product: Product, quantity: number, size: string, color: string, customMeasurements?: Record<string, string>) => void;
   removeItem: (id: string) => void;
   updateQuantity: (id: string, quantity: number) => void;
   clearCart: () => void;
@@ -34,7 +35,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   // Load from local storage
   useEffect(() => {
     setIsMounted(true);
-    const saved = localStorage.getItem("nikkys-cart");
+    const saved = localStorage.getItem("sn24-cart") || localStorage.getItem("nikkys-cart");
     if (saved) {
       try {
         setItems(JSON.parse(saved));
@@ -47,23 +48,33 @@ export function CartProvider({ children }: { children: ReactNode }) {
   // Save to local storage
   useEffect(() => {
     if (isMounted) {
-      localStorage.setItem("nikkys-cart", JSON.stringify(items));
+      localStorage.setItem("sn24-cart", JSON.stringify(items));
     }
   }, [items, isMounted]);
 
   const openCart = () => setIsCartOpen(true);
   const closeCart = () => setIsCartOpen(false);
 
-  const addItem = (product: Product, quantity: number, size: string, color: string) => {
+  const addItem = (
+    product: Product,
+    quantity: number,
+    size: string,
+    color: string,
+    customMeasurements?: Record<string, string>
+  ) => {
     setItems((prev) => {
-      const id = `${product.id}-${size}-${color}`;
+      const measurementKey = customMeasurements ? JSON.stringify(customMeasurements) : "";
+      const id = customMeasurements 
+        ? `${product.id}-${size}-${color}-${Object.values(customMeasurements).join('-')}`
+        : `${product.id}-${size}-${color}`;
+        
       const existing = prev.find((item) => item.id === id);
       if (existing) {
         return prev.map((item) =>
           item.id === id ? { ...item, quantity: item.quantity + quantity } : item
         );
       }
-      return [...prev, { id, product, quantity, size, color }];
+      return [...prev, { id, product, quantity, size, color, customMeasurements }];
     });
     openCart();
   };

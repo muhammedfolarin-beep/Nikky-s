@@ -37,6 +37,7 @@ export default function SlideCart() {
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "spring", damping: 25, stiffness: 200 }}
+            data-testid="cart-drawer"
             className="fixed top-0 right-0 h-full w-full sm:w-[400px] bg-brand-softwhite shadow-large z-50 flex flex-col"
           >
             {/* Header */}
@@ -44,6 +45,7 @@ export default function SlideCart() {
               <h2 className="font-display text-2xl text-brand-midnight">Your Bag</h2>
               <button 
                 onClick={closeCart}
+                aria-label="Close Bag"
                 className="text-brand-graphite hover:text-brand-midnight transition-colors"
               >
                 <X size={24} />
@@ -54,7 +56,7 @@ export default function SlideCart() {
             <div className="flex-1 overflow-y-auto p-6">
               {items.length === 0 ? (
                 <div className="h-full flex flex-col items-center justify-center text-center space-y-4">
-                  <p className="text-brand-graphite text-sm">Your bag is currently empty.</p>
+                  <p data-testid="empty-cart-text" className="text-brand-graphite text-sm">Your bag is currently empty.</p>
                   <button 
                     onClick={closeCart}
                     className="px-6 py-2 border border-brand-stone rounded-full text-sm font-medium hover:border-brand-midnight hover:text-brand-midnight transition-colors"
@@ -85,6 +87,8 @@ export default function SlideCart() {
                           </Link>
                           <button 
                             onClick={() => removeItem(item.id)}
+                            aria-label="Remove item"
+                            data-testid="remove-cart-item-btn"
                             className="text-brand-graphite hover:text-red-500 transition-colors"
                           >
                             <Trash2 size={16} />
@@ -100,6 +104,7 @@ export default function SlideCart() {
                           <div className="flex items-center gap-3 border border-brand-stone rounded-full px-2 py-1">
                             <button 
                               onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                              aria-label="Decrease quantity"
                               className="text-brand-graphite hover:text-brand-midnight"
                             >
                               <Minus size={14} />
@@ -107,6 +112,7 @@ export default function SlideCart() {
                             <span className="text-xs font-medium w-4 text-center">{item.quantity}</span>
                             <button 
                               onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                              aria-label="Increase quantity"
                               className="text-brand-graphite hover:text-brand-midnight"
                             >
                               <Plus size={14} />
@@ -129,13 +135,14 @@ export default function SlideCart() {
               <div className="p-6 border-t border-brand-stone bg-brand-softwhite">
                 <div className="flex justify-between items-center mb-6">
                   <span className="text-brand-charcoal font-medium uppercase tracking-wide text-sm">Subtotal</span>
-                  <span className="text-xl font-medium text-brand-midnight">{formatPrice(subtotal)}</span>
+                  <span data-testid="cart-subtotal" className="text-xl font-medium text-brand-midnight">{formatPrice(subtotal)}</span>
                 </div>
                 <p className="text-xs text-brand-graphite mb-6">
                   Shipping, taxes, and discounts calculated at checkout.
                 </p>
                 <button 
                   onClick={handleCheckout}
+                  data-testid="cart-checkout-btn"
                   className="w-full bg-brand-midnight text-brand-snow py-4 rounded-full font-medium shadow-soft hover:bg-brand-charcoal hover:shadow-medium transition-all"
                 >
                   Checkout
