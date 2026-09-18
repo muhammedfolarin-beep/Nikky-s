@@ -6,32 +6,63 @@ import Link from "next/link";
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { Loader2 } from "lucide-react";
 
 export default function SignupPage() {
-  const [providerToConfirm, setProviderToConfirm] = useState<string | null>(null);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
   const handleProviderClick = (e: React.MouseEvent, provider: string) => {
     e.preventDefault();
-    setProviderToConfirm(provider);
-  };
-
-  const confirmSignup = async () => {
-    router.push('/home');
+    signIn(provider.toLowerCase(), { callbackUrl: "/home" });
   };
 
   const handleCredentialsSignup = async (e: React.FormEvent) => {
     e.preventDefault();
-    // In a real app we'd call an API to register first, but for the prototype we'll just sign them in
-    await signIn("credentials", {
-      email,
-      password,
-      callbackUrl: "/home"
-    });
+    setIsLoading(true);
+    setError("");
+
+    try {
+      const fullName = `${firstName.trim()} ${lastName.trim()}`.trim();
+      const res = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: fullName || "Valued Client",
+          email: email.trim(),
+          password,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || "Registration failed. Please check your details.");
+      }
+
+      // Automatically sign in upon successful registration
+      const signInRes = await signIn("credentials", {
+        redirect: false,
+        email: email.trim(),
+        password,
+      });
+
+      if (signInRes?.error) {
+        setError("Account created, but error signing in. Please proceed to login.");
+        setIsLoading(false);
+      } else {
+        router.push("/home");
+        router.refresh();
+      }
+    } catch (err: any) {
+      setError(err.message || "An unexpected error occurred during account creation.");
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -70,17 +101,37 @@ export default function SignupPage() {
           className="max-w-md w-full mx-auto py-12"
         >
           <div className="text-center mb-10">
+            <Link href="/home" className="inline-flex items-center gap-2.5 mb-6 group">
+              <div className="relative w-10 h-10 group-hover:scale-105 transition-transform duration-300">
+                <Image 
+                  src="/sn24-black-logo.png" 
+                  alt="SN24 Logo" 
+                  fill 
+                  className="object-contain" 
+                />
+              </div>
+              <span className="font-display font-bold text-2xl tracking-tight text-brand-midnight">
+                SN24
+              </span>
+            </Link>
             <h1 className="font-display text-4xl text-brand-midnight mb-3 tracking-tight">Create an Account</h1>
-            <p className="text-brand-graphite text-sm">Join Nikky's Clothing to access your premium benefits.</p>
+            <p className="text-brand-graphite text-sm">Join SN24 to access your premium benefits.</p>
           </div>
 
           <form className="space-y-6" onSubmit={handleCredentialsSignup}>
+            {error && (
+              <div data-testid="signup-error-banner" className="bg-red-50 text-red-600 text-xs sm:text-sm p-3.5 rounded-xl border border-red-200 text-left font-medium leading-relaxed">
+                {error}
+              </div>
+            )}
+
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1">
                 <label htmlFor="firstName" className="text-xs font-medium text-brand-graphite tracking-wide uppercase">First Name</label>
                 <input 
                   type="text" 
                   id="firstName" 
+                  data-testid="signup-first-name"
                   className="w-full bg-transparent border-b border-brand-stone py-3 text-brand-charcoal focus:outline-none focus:border-brand-champagne transition-colors placeholder:text-brand-stone/60"
                   placeholder="First name"
                   value={firstName}
@@ -93,6 +144,7 @@ export default function SignupPage() {
                 <input 
                   type="text" 
                   id="lastName" 
+                  data-testid="signup-last-name"
                   className="w-full bg-transparent border-b border-brand-stone py-3 text-brand-charcoal focus:outline-none focus:border-brand-champagne transition-colors placeholder:text-brand-stone/60"
                   placeholder="Last name"
                   value={lastName}
@@ -107,6 +159,7 @@ export default function SignupPage() {
               <input 
                 type="email" 
                 id="email" 
+                data-testid="signup-email"
                 className="w-full bg-transparent border-b border-brand-stone py-3 text-brand-charcoal focus:outline-none focus:border-brand-champagne transition-colors placeholder:text-brand-stone/60"
                 placeholder="Enter your email"
                 value={email}
@@ -120,8 +173,9 @@ export default function SignupPage() {
               <input 
                 type="password" 
                 id="password" 
+                data-testid="signup-password"
                 className="w-full bg-transparent border-b border-brand-stone py-3 text-brand-charcoal focus:outline-none focus:border-brand-champagne transition-colors placeholder:text-brand-stone/60"
-                placeholder="Create a password"
+                placeholder="Create a password (min 8 characters)"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
@@ -131,9 +185,12 @@ export default function SignupPage() {
             <div className="pt-4">
               <button 
                 type="submit"
-                className="w-full flex items-center justify-center bg-brand-midnight text-brand-snow py-4 rounded-full font-medium shadow-soft hover:bg-brand-charcoal hover:shadow-medium transition-all duration-300"
+                data-testid="signup-submit-btn"
+                disabled={isLoading}
+                className="w-full flex items-center justify-center gap-2 bg-brand-midnight text-brand-snow py-4 rounded-full font-medium shadow-soft hover:bg-brand-charcoal hover:shadow-medium transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed"
               >
-                Create Account
+                {isLoading && <Loader2 className="animate-spin" size={18} />}
+                <span>{isLoading ? "Validating & Creating..." : "Create Account"}</span>
               </button>
             </div>
           </form>
@@ -170,36 +227,6 @@ export default function SignupPage() {
           </div>
         </motion.div>
       </div>
-
-      {/* Confirmation Modal */}
-      {providerToConfirm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-brand-charcoal/40 backdrop-blur-sm">
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="bg-brand-softwhite rounded-2xl shadow-large p-8 max-w-sm w-full relative"
-          >
-            <h3 className="font-display text-2xl text-brand-midnight mb-2">Confirm Signup</h3>
-            <p className="text-brand-graphite text-sm mb-6">
-              You are about to create an account using your {providerToConfirm} details. Do you want to continue?
-            </p>
-            <div className="flex gap-3">
-              <button 
-                onClick={() => setProviderToConfirm(null)}
-                className="flex-1 py-3 px-4 border border-brand-stone rounded-full text-sm font-medium text-brand-charcoal hover:bg-brand-mist transition-colors"
-              >
-                Cancel
-              </button>
-              <button 
-                onClick={confirmSignup}
-                className="flex-1 py-3 px-4 bg-brand-midnight text-brand-snow rounded-full text-sm font-medium hover:bg-brand-charcoal transition-colors shadow-soft"
-              >
-                Continue
-              </button>
-            </div>
-          </motion.div>
-        </div>
-      )}
     </div>
   );
 }

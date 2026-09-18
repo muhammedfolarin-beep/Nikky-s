@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { Lock } from "lucide-react";
 
 export default function AdminLoginPage() {
@@ -29,7 +30,7 @@ export default function AdminLoginPage() {
         setError("Invalid admin credentials");
         setIsLoading(false);
       } else {
-        router.push("/admin");
+        window.location.href = "/admin";
       }
     } catch (err) {
       setError("An unexpected error occurred");
@@ -42,8 +43,13 @@ export default function AdminLoginPage() {
       <div className="w-full max-w-md bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
         {/* Header */}
         <div className="bg-brand-midnight text-white text-center py-10 px-6">
-          <div className="mx-auto w-12 h-12 bg-white/10 rounded-full flex items-center justify-center mb-4">
-            <Lock size={24} className="text-white" />
+          <div className="relative w-14 h-14 mx-auto mb-3">
+            <Image 
+              src="/sn24-white-logo.png" 
+              alt="SN24 Logo" 
+              fill 
+              className="object-contain" 
+            />
           </div>
           <h1 className="text-2xl font-display font-semibold mb-2">Admin Portal</h1>
           <p className="text-white/70 text-sm">Sign in to access the control panel</p>
@@ -53,7 +59,7 @@ export default function AdminLoginPage() {
         <div className="p-8">
           <form onSubmit={handleLogin} className="space-y-6">
             {error && (
-              <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm text-center border border-red-100">
+              <div data-testid="admin-login-error" className="bg-red-50 text-red-600 p-3 rounded-lg text-sm text-center border border-red-100">
                 {error}
               </div>
             )}
@@ -61,12 +67,14 @@ export default function AdminLoginPage() {
             <div className="space-y-2">
               <label className="text-sm font-medium text-gray-700">Email Address</label>
               <input
+                id="email"
+                data-testid="admin-login-email"
                 type="email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand-midnight/20 focus:border-brand-midnight transition-all"
-                placeholder="admin@nikkys.com"
+                placeholder="admin@sn24.com.ng"
               />
             </div>
 
@@ -75,6 +83,8 @@ export default function AdminLoginPage() {
                 <label className="text-sm font-medium text-gray-700">Password</label>
               </div>
               <input
+                id="password"
+                data-testid="admin-login-password"
                 type="password"
                 required
                 value={password}
@@ -86,6 +96,7 @@ export default function AdminLoginPage() {
 
             <button
               type="submit"
+              data-testid="admin-login-submit"
               disabled={isLoading}
               className="w-full bg-brand-midnight text-white rounded-lg py-3.5 font-medium hover:bg-brand-charcoal transition-colors disabled:opacity-70 flex justify-center items-center gap-2"
             >
