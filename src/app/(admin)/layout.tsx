@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
+import Image from "next/image";
 import AdminProfileDropdown from "./AdminProfileDropdown";
 import { 
   LayoutDashboard, Package, ShoppingBag, Users, LogOut, 
@@ -36,11 +37,16 @@ export default async function AdminLayout({
       {/* Sidebar */}
       <aside className="w-64 bg-white border-r border-gray-200 flex flex-col h-full shrink-0">
         <div className="p-6">
-          <Link href="/admin" className="font-display font-semibold text-2xl tracking-tight text-brand-midnight flex items-center gap-2">
-            <div className="w-8 h-8 bg-brand-midnight rounded flex items-center justify-center text-white">
-              N
+          <Link href="/admin" className="font-display font-semibold text-2xl tracking-tight text-brand-midnight flex items-center gap-2.5">
+            <div className="relative w-8 h-8">
+              <Image 
+                src="/sn24-black-logo.png" 
+                alt="SN24 Logo" 
+                fill 
+                className="object-contain" 
+              />
             </div>
-            Nikky's
+            SN24
           </Link>
         </div>
         
@@ -140,7 +146,7 @@ export default async function AdminLayout({
             </div>
             
             <AdminProfileDropdown 
-              name={user?.name || "Nikky Admin"} 
+              name={user?.name || "SN24 Admin"} 
               role={user?.role || "Manager"}
               imageUrl={session.user?.image}
             />

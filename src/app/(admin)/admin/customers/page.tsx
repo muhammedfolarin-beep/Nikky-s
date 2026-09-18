@@ -4,8 +4,17 @@ import DeleteCustomerButton from "./DeleteCustomerButton";
 export default async function AdminCustomersPage() {
   const customers = await prisma.user.findMany({
     orderBy: { email: "asc" },
-    include: {
-      orders: true
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      role: true,
+      orders: {
+        select: {
+          id: true,
+          totalAmount: true,
+        }
+      }
     }
   });
 

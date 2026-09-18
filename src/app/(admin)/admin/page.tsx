@@ -3,10 +3,16 @@ import { DollarSign, Package, ShoppingBag, Users } from "lucide-react";
 import FormattedPrice from "@/components/ui/FormattedPrice";
 
 export default async function AdminDashboard() {
-  const [totalProducts, totalOrders, totalUsers] = await Promise.all([
+  const [totalProducts, totalOrders, totalUsers, revenueAggregate] = await Promise.all([
     prisma.product.count(),
     prisma.order.count(),
-    prisma.user.count()
+    prisma.user.count(),
+    prisma.order.aggregate({
+      _sum: { totalAmount: true },
+      where: {
+        status: { in: ["PAID", "IN_PRODUCTION", "READY_FOR_DISPATCH", "SHIPPED", "DELIVERED"] }
+      }
+    })
   ]);
 
   const recentOrders = await prisma.order.findMany({
@@ -15,7 +21,7 @@ export default async function AdminDashboard() {
     include: { user: true }
   });
 
-  const totalRevenue = recentOrders.reduce((sum, order) => sum + order.totalAmount, 0);
+  const totalRevenue = revenueAggregate._sum.totalAmount || 0;
 
   return (
     <div className="p-8">

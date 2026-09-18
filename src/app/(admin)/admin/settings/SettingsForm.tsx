@@ -6,8 +6,8 @@ import { updateStoreSettings } from "@/lib/actions";
 
 export default function SettingsForm({ initialSettings }: { initialSettings: any }) {
   const [formData, setFormData] = useState({
-    storeName: initialSettings?.storeName || "Nikky's",
-    contactEmail: initialSettings?.contactEmail || "hello@nikkys.com",
+    storeName: initialSettings?.storeName || "SN24",
+    contactEmail: initialSettings?.contactEmail || "hello@sn24.com.ng",
     contactPhone: initialSettings?.contactPhone || "",
     currency: initialSettings?.currency || "USD",
     timezone: initialSettings?.timezone || "UTC",

@@ -34,7 +34,11 @@ export default function ProductListClient({ products }: { products: any[] }) {
     <>
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-display font-semibold text-gray-800">Products</h1>
-        <Link href="/admin/products/new" className="bg-brand-midnight text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-gray-800 transition-colors">
+        <Link 
+          href="/admin/products/new" 
+          data-testid="admin-add-product-btn"
+          className="bg-brand-midnight text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-gray-800 transition-colors"
+        >
           <Plus size={18} />
           Add Product
         </Link>
