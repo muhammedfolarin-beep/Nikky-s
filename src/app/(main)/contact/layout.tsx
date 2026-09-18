@@ -1,11 +1,11 @@
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Contact Us",
-  description: "Get in touch with the Nikky's Clothing support team. We're here to help with orders, styling advice, and more.",
+  title: "Concierge & Support | SN24 Atelier",
+  description: "Get in touch with the SN24 Atelier support team. We're here to help with bespoke fittings, styling advice, and orders.",
   openGraph: {
-    title: "Contact Us | Nikky's Clothing",
-    description: "Get in touch with the Nikky's Clothing support team. We're here to help with orders, styling advice, and more.",
+    title: "Concierge & Support | SN24 Atelier",
+    description: "Get in touch with the SN24 Atelier support team. We're here to help with bespoke fittings, styling advice, and orders.",
   }
 };
 

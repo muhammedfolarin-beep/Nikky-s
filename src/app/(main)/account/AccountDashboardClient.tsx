@@ -22,7 +22,7 @@ export default function AccountDashboardClient({ session, orders }: { session: a
     const name = formData.get("name") as string;
     const email = formData.get("email") as string;
 
-    const res = await updateUserAccount(session.user.id, { name, email });
+    const res = await updateUserAccount({ name, email });
     
     if (res.success) {
       setMessage({ type: "success", text: "Account details updated successfully!" });

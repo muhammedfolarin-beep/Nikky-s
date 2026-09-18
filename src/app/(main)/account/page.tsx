@@ -6,7 +6,7 @@ import AccountDashboardClient from "./AccountDashboardClient";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "My Account | Nikky's Clothing",
+  title: "My Account | SN24 Atelier",
   description: "Manage your account, view orders, and update details.",
 };
 
