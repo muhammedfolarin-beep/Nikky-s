@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import ProductCard from "@/components/shop/ProductCard";
+import ProductCard from "@/components/product/ProductCard";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {

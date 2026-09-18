@@ -1,5 +1,5 @@
 import { getProductsByCollection } from "@/lib/actions";
-import ProductCard from "@/components/shop/ProductCard";
+import ProductCard from "@/components/product/ProductCard";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
 

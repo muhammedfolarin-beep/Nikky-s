@@ -23,7 +23,7 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
     title: product.name,
     description: product.description || undefined,
     openGraph: {
-      title: `${product.name} | Nikky's Clothing`,
+      title: `${product.name} | SN24`,
       description: product.description || undefined,
       images: [
         {

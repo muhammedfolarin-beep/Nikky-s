@@ -64,6 +64,7 @@ export default function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
               <input
                 autoFocus
                 type="text"
+                data-testid="search-input"
                 placeholder="Search for products, categories, or collections..."
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
@@ -72,6 +73,8 @@ export default function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
             </div>
             <button 
               onClick={onClose}
+              data-testid="search-close-btn"
+              aria-label="Close search overlay"
               className="p-2 text-brand-graphite hover:text-brand-midnight transition-colors"
             >
               <X size={32} strokeWidth={1.5} />

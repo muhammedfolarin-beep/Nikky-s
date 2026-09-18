@@ -27,7 +27,7 @@ export const mockProducts: Product[] = [
   {
     id: "p1",
     name: "Structured Midi Shirt Dress",
-    brand: "Nikky's Reserve",
+    brand: "SN24 Reserve",
     price: 345,
     category: "The Office Edit",
     type: "Dresses",
@@ -47,7 +47,7 @@ export const mockProducts: Product[] = [
   {
     id: "p2",
     name: "Fluid Satin Slip Dress",
-    brand: "Studio N",
+    brand: "SN24 Studio",
     price: 285,
     category: "Evening & Occasion",
     type: "Dresses",
@@ -66,7 +66,7 @@ export const mockProducts: Product[] = [
   {
     id: "p3",
     name: "Soft Linen Wide-Leg Trousers",
-    brand: "Nikky's Essentials",
+    brand: "SN24 Essentials",
     price: 195,
     category: "The Resort Collection",
     type: "Bottoms",
@@ -84,7 +84,7 @@ export const mockProducts: Product[] = [
   {
     id: "p4",
     name: "Classic Double-Breasted Trench Coat",
-    brand: "Nikky's Reserve",
+    brand: "SN24 Reserve",
     price: 450,
     originalPrice: 520,
     category: "Outerwear & Layering",
@@ -104,7 +104,7 @@ export const mockProducts: Product[] = [
   {
     id: "p5",
     name: "Cashmere-Blend Ribbed Turtleneck",
-    brand: "Nikky's Essentials",
+    brand: "SN24 Essentials",
     price: 220,
     category: "Everyday Essentials",
     type: "Knitwear",
@@ -122,7 +122,7 @@ export const mockProducts: Product[] = [
   {
     id: "p6",
     name: "Crisp Silk Camisole",
-    brand: "Studio N",
+    brand: "SN24 Studio",
     price: 135,
     category: "The Office Edit",
     type: "Tops & Blouses",
@@ -141,7 +141,7 @@ export const mockProducts: Product[] = [
   {
     id: "p7",
     name: "Elevated Denim Jacket",
-    brand: "Nikky's Essentials",
+    brand: "SN24 Essentials",
     price: 185,
     category: "Everyday Essentials",
     type: "Denim",
@@ -160,7 +160,7 @@ export const mockProducts: Product[] = [
   {
     id: "p8",
     name: "Tailored Double-Breasted Blazer",
-    brand: "Nikky's Reserve",
+    brand: "SN24 Reserve",
     price: 310,
     category: "The Office Edit",
     type: "Outerwear",
@@ -179,7 +179,7 @@ export const mockProducts: Product[] = [
   {
     id: "p9",
     name: "Silk Sleepwear Set",
-    brand: "Studio N",
+    brand: "SN24 Studio",
     price: 245,
     originalPrice: 280,
     category: "Everyday Essentials",
@@ -198,7 +198,7 @@ export const mockProducts: Product[] = [
   {
     id: "p10",
     name: "Draped Asymmetric Blouse",
-    brand: "Nikky's Atelier",
+    brand: "SN24 Atelier",
     price: 195,
     category: "Evening & Occasion",
     type: "Tops & Blouses",

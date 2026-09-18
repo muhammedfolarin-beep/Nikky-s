@@ -4,7 +4,7 @@ import { useState, useMemo, useEffect, Suspense } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { getProducts } from "@/lib/actions";
 import { Product } from "@/data/mockProducts"; // using this type for now
-import ProductCard from "@/components/shop/ProductCard";
+import ProductCard from "@/components/product/ProductCard";
 import ShopFilterSidebar from "@/components/shop/ShopFilterSidebar";
 import ShopHeader from "@/components/shop/ShopHeader";
 
