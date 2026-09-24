@@ -11,17 +11,17 @@ interface CollectionPageProps {
 const collectionData: Record<string, { name: string, bannerImage: string, description: string }> = {
   "the-sn24-capsule": {
     name: "The SN24 Capsule",
-    bannerImage: "https://images.unsplash.com/photo-1544022613-e87ca75a784a?q=80&w=1600&auto=format&fit=crop",
+    bannerImage: "/uploads/1786653991709-494.jpg",
     description: "A masterclass in effortless confidence and meticulous craftsmanship."
   },
   "the-midnight-navy-edit": {
     name: "The Midnight Navy Edit",
-    bannerImage: "https://images.unsplash.com/photo-1515347619362-747da441229a?q=80&w=1600&auto=format&fit=crop",
+    bannerImage: "/uploads/1786654380097-3281.jpg",
     description: "Sophisticated depth for the transition from day to evening."
   },
   "soft-white-minimalism": {
     name: "Soft White Minimalism",
-    bannerImage: "https://images.unsplash.com/photo-1584916201218-f4242ceb4809?q=80&w=1600&auto=format&fit=crop",
+    bannerImage: "/uploads/1786654201054-spring_outfits_casual__The_Chic_Minimalist_a_crisp_white_oversized_poplin_button-down_shirt_with_structured_cuffs__tucked_into_high-waisted_tailored_beige_linen_trousers_with_a_thin_leather_belt_.jpg",
     description: "Breathable luxury and clean, uninterrupted lines."
   }
 };
@@ -46,10 +46,6 @@ export default async function CollectionPage({ params }: CollectionPageProps) {
   
   const products = await getProductsByCollection(data.name);
 
-  if (products.length === 0) {
-    notFound();
-  }
-
   return (
     <div className="min-h-screen bg-brand-softwhite">
       {/* Hero Banner */}
@@ -69,14 +65,32 @@ export default async function CollectionPage({ params }: CollectionPageProps) {
       <div className="max-w-[1400px] mx-auto px-4 md:px-8 lg:px-16 py-20">
         <div className="flex justify-between items-end mb-12">
           <h2 className="font-display text-2xl text-brand-midnight">Explore the Collection</h2>
-          <p className="text-brand-graphite text-sm">{products.length} Products</p>
+          <p className="text-brand-graphite text-sm">{products.length} {products.length === 1 ? "Product" : "Products"}</p>
         </div>
         
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-12">
-          {products.map(product => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
+        {products.length === 0 ? (
+          <div className="bg-white border border-brand-stone rounded-2xl p-12 text-center max-w-xl mx-auto shadow-xs">
+            <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-brand-champagne bg-brand-midnight px-3 py-1 rounded-full inline-block mb-4">
+              Atelier Preview
+            </span>
+            <h3 className="font-display text-2xl text-brand-midnight mb-2">Curated Pieces In Tailoring</h3>
+            <p className="text-brand-graphite text-xs sm:text-sm mb-6 leading-relaxed">
+              Our artisans are currently finalizing the tailored silhouettes and capsule drops for {data.name}. Explore ready-to-wear pieces currently in stock.
+            </p>
+            <a 
+              href="/shop" 
+              className="inline-block bg-brand-midnight text-brand-snow px-8 py-3.5 rounded-full text-xs font-bold uppercase tracking-widest hover:bg-brand-charcoal transition-colors shadow-soft"
+            >
+              Explore Full Catalog
+            </a>
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-12">
+            {products.map(product => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

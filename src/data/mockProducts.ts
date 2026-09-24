@@ -34,8 +34,8 @@ export const mockProducts: Product[] = [
     colors: ["#16202C", "#FCFCFC", "#E4E7EB"],
     sizes: ["XS", "S", "M", "L"],
     images: [
-      "https://images.unsplash.com/photo-1595777457583-95e059d581b8?q=80&w=600&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1544022613-e87ca75a784a?q=80&w=600&auto=format&fit=crop"
+      "/uploads/1786654782269-download__8_.jpg",
+      "/uploads/1786654782271-download__7_.jpg"
     ],
     isNew: true,
     isBestseller: true,
@@ -54,8 +54,8 @@ export const mockProducts: Product[] = [
     colors: ["#16202C"],
     sizes: ["S", "M", "L"],
     images: [
-      "https://images.unsplash.com/photo-1515347619362-747da441229a?q=80&w=600&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1582142407894-ec85a1260a46?q=80&w=600&auto=format&fit=crop"
+      "/uploads/1786654380097-3281.jpg",
+      "/uploads/1786654380104-3290.jpg"
     ],
     isNew: true,
     description: "Elegant and sophisticated depth for the transition from day to evening. This slip dress drapes beautifully over the body, crafted from luxurious heavy silk satin.",
@@ -73,8 +73,8 @@ export const mockProducts: Product[] = [
     colors: ["#FCFCFC", "#E4E7EB"],
     sizes: ["24", "26", "28", "30", "32"],
     images: [
-      "https://images.unsplash.com/photo-1584916201218-f4242ceb4809?q=80&w=600&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1608256246200-53e65329e324?q=80&w=600&auto=format&fit=crop"
+      "/uploads/1786654266079-Timeless_Gold_Watch___Blue_Stripes_Ensemble.jpg",
+      "/uploads/1786654266082-_High_Waisted_Wide_Leg_Work_Pants_for_Women___Elegant_Office___Business_Casual_Style_.jpg"
     ],
     description: "Breathable luxury and clean, uninterrupted lines. These high-waisted wide-leg trousers are crafted from crisp linens in calming neutral tones, perfect for relaxed sunny afternoons.",
     material: "100% Premium Organic Linen.",
@@ -92,8 +92,8 @@ export const mockProducts: Product[] = [
     colors: ["#C9A96E", "#16202C"],
     sizes: ["S", "M", "L", "XL"],
     images: [
-      "https://images.unsplash.com/photo-1539533113208-f6df8cc8b543?q=80&w=600&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1544022613-e87ca75a784a?q=80&w=600&auto=format&fit=crop"
+      "/uploads/1786654891405-___Chocolate_Brown_Satin_Blouse_Outfit_Inspiration.jpg",
+      "/uploads/1786653991709-494.jpg"
     ],
     isBestseller: true,
     description: "The finishing touch for any premium wardrobe. This timeless trench coat drapes beautifully over any ensemble, offering a structured, commanding silhouette.",
@@ -111,8 +111,8 @@ export const mockProducts: Product[] = [
     colors: ["#16202C", "#4A5565"],
     sizes: ["XS", "S", "M", "L"],
     images: [
-      "https://images.unsplash.com/photo-1576566588028-4147f3842f27?q=80&w=600&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?q=80&w=600&auto=format&fit=crop"
+      "/uploads/1786654115061-Gemini_Generated_Image_z9hik8z9hik8z9hi.png",
+      "/uploads/1786654115125-____.jpg"
     ],
     description: "The foundation of a premium wardrobe. Designed for elevated, effortless daily living, this fine-knit turtleneck offers warmth and unmatched softness.",
     material: "70% Merino Wool, 30% Cashmere.",
@@ -129,8 +129,8 @@ export const mockProducts: Product[] = [
     colors: ["#FCFCFC"],
     sizes: ["S", "M", "L"],
     images: [
-      "https://images.unsplash.com/photo-1525507119028-ed4c629a60a3?q=80&w=600&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1582142407894-ec85a1260a46?q=80&w=600&auto=format&fit=crop"
+      "/uploads/1786654461488-Solid_Color_Lapel_Long_Sleeve_Casual_Top.jpg",
+      "/uploads/1786654473252-Gemini_Generated_Image_3sfekv3sfekv3sfe.png"
     ],
     isNew: true,
     description: "A celebration of light, airy structures and understated elegance. This seamless silk camisole is a foundational layering piece for sharp blazers or flowing skirts.",
@@ -148,8 +148,8 @@ export const mockProducts: Product[] = [
     colors: ["#B8C8D6"],
     sizes: ["S", "M", "L"],
     images: [
-      "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=600&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1539008835657-9e8e9680c956?q=80&w=600&auto=format&fit=crop"
+      "/uploads/1786654201054-spring_outfits_casual__The_Chic_Minimalist_a_crisp_white_oversized_poplin_button-down_shirt_with_structured_cuffs__tucked_into_high-waisted_tailored_beige_linen_trousers_with_a_thin_leather_belt_.jpg",
+      "/uploads/1786654201061-Women_s_Oversized_Cotton_Poplin_Button-Down_Shirt___More_Colors_Available.jpg"
     ],
     isBestseller: true,
     description: "High-quality basics reimagined. Our elevated denim jacket features minimalist hardware and a structured fit that effortlessly bridges the gap between casual and polished.",
@@ -167,8 +167,8 @@ export const mockProducts: Product[] = [
     colors: ["#16202C"],
     sizes: ["36", "38", "40", "42"],
     images: [
-      "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?q=80&w=600&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1592878904946-b3cd8ae243d0?q=80&w=600&auto=format&fit=crop"
+      "/uploads/1786653991709-494.jpg",
+      "/uploads/1786653991714-429.jpg"
     ],
     isNew: true,
     description: "Command the boardroom with sharply tailored blazers. Neatly made pieces that project authority and style, featuring deep, rich tones and timeless silhouettes.",
@@ -187,8 +187,8 @@ export const mockProducts: Product[] = [
     colors: ["#FCFCFC", "#16202C"],
     sizes: ["XS", "S", "M", "L"],
     images: [
-      "https://images.unsplash.com/photo-1583391733975-685b8823528b?q=80&w=600&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1583391733958-d15070f14022?q=80&w=600&auto=format&fit=crop"
+      "/uploads/1786654655428-download__6_.jpg",
+      "/uploads/1786654655436-Buy_this_Black_Square_Neck_Cap_Sleeve_Top_with_Champagne_Satin_Maxi_Skirt.jpg"
     ],
     description: "Ultimate wardrobe foundation for effortless relaxed living. Premium matching silk sleepwear designed to provide comfort without compromising on elegance.",
     material: "100% Washable Silk.",
@@ -205,8 +205,8 @@ export const mockProducts: Product[] = [
     colors: ["#C9A96E", "#16202C"],
     sizes: ["S", "M", "L"],
     images: [
-      "https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80&w=600&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1485230895905-ef10cefaec8e?q=80&w=600&auto=format&fit=crop"
+      "/uploads/1786653893542-16306.jpg",
+      "/uploads/1786653893548-16953.jpg"
     ],
     isBestseller: true,
     description: "For moments that require a lasting impression. This statement piece is crafted from luxurious, flowing fabrics that drape beautifully, offering sophisticated depth.",

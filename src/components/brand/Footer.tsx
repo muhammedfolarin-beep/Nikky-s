@@ -9,6 +9,7 @@ import {
   MessageSquare
 } from "lucide-react";
 import Image from "next/image";
+import NewsletterForm from "./NewsletterForm";
 
 export default async function Footer() {
   const settings = await getStoreSettings();
@@ -147,23 +148,7 @@ export default async function Footer() {
             Receive private capsule drops and SN24 collection previews.
           </p>
           
-          <form className="flex group focus-within:ring-1 focus-within:ring-brand-champagne rounded-sm overflow-hidden mb-6 shadow-sm border border-white/10">
-            <input 
-              type="email" 
-              placeholder="Your email address" 
-              className="px-3.5 py-2.5 w-full text-xs text-brand-charcoal outline-none bg-brand-snow placeholder:text-brand-graphite/60 transition-colors" 
-              aria-label="Email address for newsletter"
-              required
-            />
-            <button 
-              type="submit"
-              className="bg-brand-champagne hover:bg-brand-softgold text-brand-midnight px-3.5 py-2.5 text-xs font-bold transition-colors duration-300 whitespace-nowrap flex items-center gap-1"
-              aria-label="Subscribe"
-            >
-              <span>Join</span>
-              <ArrowRight size={13} />
-            </button>
-          </form>
+          <NewsletterForm />
 
           {/* Quick Contact info */}
           <div className="text-xs space-y-2 text-brand-silver/70 mt-auto pt-2 border-t border-white/10">
@@ -195,8 +180,8 @@ export default async function Footer() {
         </div>
 
         <div className="flex gap-6">
-          <Link href="/contact" className="hover:text-brand-snow transition-colors duration-300">Privacy Policy</Link>
-          <Link href="/contact" className="hover:text-brand-snow transition-colors duration-300">Terms of Service</Link>
+          <Link href="/privacy" className="hover:text-brand-snow transition-colors duration-300">Privacy Policy</Link>
+          <Link href="/terms" className="hover:text-brand-snow transition-colors duration-300">Terms of Service</Link>
         </div>
       </div>
     </footer>

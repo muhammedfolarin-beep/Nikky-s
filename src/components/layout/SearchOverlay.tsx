@@ -2,8 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, X } from "lucide-react";
-import { mockProducts, Product } from "@/data/mockProducts";
+import { Search, X, Loader2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useCurrency } from "@/context/CurrencyContext";
@@ -13,20 +12,41 @@ interface SearchOverlayProps {
   onClose: () => void;
 }
 
+interface SearchProduct {
+  id: string;
+  name: string;
+  price: number;
+  category: string;
+  images: string[];
+}
+
 export default function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState<Product[]>([]);
+  const [results, setResults] = useState<SearchProduct[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   const { formatPrice } = useCurrency();
 
   useEffect(() => {
     if (query.trim().length > 1) {
-      const filtered = mockProducts.filter((p) => 
-        p.name.toLowerCase().includes(query.toLowerCase()) || 
-        p.category.toLowerCase().includes(query.toLowerCase())
-      );
-      setResults(filtered.slice(0, 6)); // Limit to 6 results
+      setIsLoading(true);
+      const timer = setTimeout(async () => {
+        try {
+          const res = await fetch(`/api/products?q=${encodeURIComponent(query.trim())}&limit=12`);
+          if (res.ok) {
+            const data = await res.json();
+            setResults(data.data || []);
+          }
+        } catch (err) {
+          console.error("Search fetch error:", err);
+        } finally {
+          setIsLoading(false);
+        }
+      }, 250);
+
+      return () => clearTimeout(timer);
     } else {
       setResults([]);
+      setIsLoading(false);
     }
   }, [query]);
 
@@ -40,6 +60,7 @@ export default function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
       document.body.style.overflow = "hidden"; // Prevent scrolling
     } else {
       setQuery("");
+      setResults([]);
     }
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
@@ -65,11 +86,14 @@ export default function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                 autoFocus
                 type="text"
                 data-testid="search-input"
-                placeholder="Search for products, categories, or collections..."
+                placeholder="Search catalog, tailoring silhouettes, or collections..."
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 className="w-full bg-transparent text-xl md:text-3xl font-display text-brand-midnight focus:outline-none placeholder:text-brand-stone"
               />
+              {isLoading && (
+                <Loader2 size={20} className="animate-spin text-brand-midnight ml-2 mr-4" />
+              )}
             </div>
             <button 
               onClick={onClose}
@@ -85,10 +109,10 @@ export default function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
           <div className="flex-1 overflow-y-auto px-8 py-12">
             <div className="max-w-[1400px] mx-auto">
               
-              {query.length > 1 && results.length === 0 && (
+              {query.length > 1 && !isLoading && results.length === 0 && (
                 <div className="text-center mt-20">
                   <p className="text-brand-graphite text-lg">No results found for "{query}"</p>
-                  <p className="text-brand-stone mt-2 text-sm">Try searching for "Wool", "Leather", or "Accessories"</p>
+                  <p className="text-brand-stone mt-2 text-sm">Try searching for "Dress", "Blazer", "Silk", or "Bespoke"</p>
                 </div>
               )}
 
@@ -96,7 +120,7 @@ export default function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                 <div className="mt-8">
                   <h3 className="text-xs font-medium text-brand-graphite uppercase tracking-wide mb-6">Popular Searches</h3>
                   <div className="flex flex-wrap gap-3">
-                    {["Cashmere", "Tailored", "Accessories", "Wool Coat"].map(term => (
+                    {["Dresses", "Blazers", "The SN24 Capsule", "Silk", "Tailored"].map(term => (
                       <button 
                         key={term}
                         onClick={() => setQuery(term)}
@@ -115,25 +139,28 @@ export default function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                   animate={{ opacity: 1 }}
                   className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6"
                 >
-                  {results.map((product) => (
-                    <Link 
-                      key={product.id} 
-                      href={`/shop/${product.id}`}
-                      onClick={onClose}
-                      className="group block"
-                    >
-                      <div className="relative aspect-[3/4] overflow-hidden bg-brand-stone/20 mb-4 rounded-sm">
-                        <Image 
-                          src={product.images[0]} 
-                          alt={product.name} 
-                          fill 
-                          className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out" 
-                        />
-                      </div>
-                      <h4 className="font-medium text-sm text-brand-charcoal truncate">{product.name}</h4>
-                      <p className="text-brand-graphite text-xs mt-1">{formatPrice(product.price)}</p>
-                    </Link>
-                  ))}
+                  {results.map((product) => {
+                    const imgUrl = product.images?.[0] || "/placeholder.jpg";
+                    return (
+                      <Link 
+                        key={product.id} 
+                        href={`/shop/${product.id}`}
+                        onClick={onClose}
+                        className="group block"
+                      >
+                        <div className="relative aspect-[3/4] overflow-hidden bg-brand-stone/20 mb-3 rounded-md">
+                          <Image 
+                            src={imgUrl} 
+                            alt={product.name} 
+                            fill 
+                            className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out" 
+                          />
+                        </div>
+                        <h4 className="font-medium text-sm text-brand-charcoal truncate">{product.name}</h4>
+                        <p className="text-brand-graphite text-xs mt-0.5">{formatPrice(product.price)}</p>
+                      </Link>
+                    );
+                  })}
                 </motion.div>
               )}
 

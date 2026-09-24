@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
-import { sendOrderConfirmationEmail } from "@/lib/mail";
+import { sendOrderConfirmationEmail, sendContactInquiryEmail } from "@/lib/mail";
 
 // ==========================================
 // Authorization Helpers
@@ -237,6 +237,38 @@ export async function processOrder(orderData: any, items: any[]) {
       console.error("Order processing error:", error);
     }
     return { success: false, error: error.message || "Failed to process order." };
+  }
+}
+
+export async function getOrderReceipt(orderId: string, emailOrRef?: string) {
+  try {
+    if (!orderId) return null;
+
+    const order = await prisma.order.findUnique({
+      where: { id: orderId },
+      include: { items: true },
+    });
+
+    if (!order) return null;
+
+    // Security verification: allow if email/paymentRef matches or logged-in user matches
+    if (emailOrRef) {
+      const matchEmail = order.shippingEmail?.toLowerCase() === emailOrRef.toLowerCase();
+      const matchRef = order.paymentRef?.toLowerCase() === emailOrRef.toLowerCase();
+      if (!matchEmail && !matchRef) {
+        const session = await getServerSession(authOptions);
+        if (!session?.user?.email || order.shippingEmail?.toLowerCase() !== session.user.email.toLowerCase()) {
+          return null;
+        }
+      }
+    }
+
+    return order;
+  } catch (error) {
+    if (process.env.NODE_ENV !== "production") {
+      console.error("Error fetching order receipt:", error);
+    }
+    return null;
   }
 }
 
@@ -631,4 +663,36 @@ export async function getAdminAnalyticsData() {
     })),
   };
 }
+
+export async function submitContactInquiry(data: {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone?: string;
+  subject: string;
+  message: string;
+}) {
+  try {
+    const fullName = `${data.firstName || ""} ${data.lastName || ""}`.trim();
+    if (!fullName || !data.email || !data.message) {
+      return { success: false, error: "Please complete all required fields (Name, Email, Message)." };
+    }
+
+    await sendContactInquiryEmail({
+      name: fullName,
+      email: data.email.trim(),
+      phone: data.phone?.trim(),
+      subject: data.subject || "General Inquiry",
+      message: data.message.trim(),
+    });
+
+    return { success: true };
+  } catch (error: any) {
+    if (process.env.NODE_ENV !== "production") {
+      console.error("Error submitting contact inquiry:", error);
+    }
+    return { success: false, error: "Failed to dispatch concierge message. Please try again." };
+  }
+}
+
 

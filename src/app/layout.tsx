@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     siteName: "SN24",
     images: [
       {
-        url: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=1200&auto=format&fit=crop",
+        url: "/uploads/1786653991709-494.jpg",
         width: 1200,
         height: 630,
         alt: "SN24",
@@ -47,7 +47,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "SN24 | Contemporary Luxury & Ready-to-Wear",
     description: "Contemporary luxury meets sculpted minimalism.",
-    images: ["https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=1200&auto=format&fit=crop"],
+    images: ["/uploads/1786653991709-494.jpg"],
   },
 };
 

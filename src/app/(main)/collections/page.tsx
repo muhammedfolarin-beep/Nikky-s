@@ -12,19 +12,19 @@ const collections = [
   {
     name: "The SN24 Capsule",
     slug: "the-sn24-capsule",
-    image: "https://images.unsplash.com/photo-1544022613-e87ca75a784a?q=80&w=1200&auto=format&fit=crop",
+    image: "/uploads/1786653991709-494.jpg",
     description: "A masterclass in effortless confidence and meticulous craftsmanship."
   },
   {
     name: "The Midnight Navy Edit",
     slug: "the-midnight-navy-edit",
-    image: "https://images.unsplash.com/photo-1515347619362-747da441229a?q=80&w=1200&auto=format&fit=crop",
+    image: "/uploads/1786654380097-3281.jpg",
     description: "Sophisticated depth for the transition from day to evening."
   },
   {
     name: "Soft White Minimalism",
     slug: "soft-white-minimalism",
-    image: "https://images.unsplash.com/photo-1584916201218-f4242ceb4809?q=80&w=1200&auto=format&fit=crop",
+    image: "/uploads/1786654201054-spring_outfits_casual__The_Chic_Minimalist_a_crisp_white_oversized_poplin_button-down_shirt_with_structured_cuffs__tucked_into_high-waisted_tailored_beige_linen_trousers_with_a_thin_leather_belt_.jpg",
     description: "Breathable luxury and clean, uninterrupted lines."
   }
 ];

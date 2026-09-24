@@ -1,21 +1,25 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getProductById } from "@/data/mockProducts";
+import { prisma } from "@/lib/prisma";
 
 interface RouteParams {
   params: Promise<{ id: string }>;
 }
 
 export async function GET(request: NextRequest, { params }: RouteParams) {
-  const { id } = await params;
-  
-  // Emulate database fetch delay
-  await new Promise(resolve => setTimeout(resolve, 300));
-  
-  const product = getProductById(id);
-  
-  if (!product) {
-    return NextResponse.json({ error: "Product not found" }, { status: 404 });
+  try {
+    const { id } = await params;
+    
+    const product = await prisma.product.findUnique({
+      where: { id },
+    });
+    
+    if (!product) {
+      return NextResponse.json({ error: "Product not found" }, { status: 404 });
+    }
+    
+    return NextResponse.json({ data: product });
+  } catch (error: any) {
+    console.error("API /api/products/[id] error:", error);
+    return NextResponse.json({ error: "Failed to fetch product" }, { status: 500 });
   }
-  
-  return NextResponse.json({ data: product });
 }

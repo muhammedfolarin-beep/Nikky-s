@@ -600,4 +600,75 @@ support@sn24.com.ng
   }
 }
 
+export interface ContactInquiryPayload {
+  name: string;
+  email: string;
+  phone?: string;
+  subject: string;
+  message: string;
+}
+
+export async function sendContactInquiryEmail(payload: ContactInquiryPayload) {
+  const { name, email, phone, subject, message } = payload;
+  const conciergeTo = process.env.CONTACT_EMAIL || process.env.GMAIL_USER || "hello@sn24.com.ng";
+
+  const emailSubject = `[SN24 Concierge Inquiry] ${subject} - ${name}`;
+  const text = `
+New Client Concierge Inquiry:
+
+From: ${name} (${email})
+Phone: ${phone || "Not provided"}
+Inquiry Topic: ${subject}
+Date: ${new Date().toUTCString()}
+
+Message:
+${message}
+  `.trim();
+
+  const html = `
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"></head>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0C0C0E; color: #F9F9FB; margin: 0; padding: 24px;">
+  <div style="max-width: 600px; margin: 0 auto; background: #17171C; border: 1px solid #26262B; border-radius: 12px; padding: 32px;">
+    <h2 style="color: #D8C3A5; font-size: 20px; margin-top: 0;">New Client Concierge Inquiry</h2>
+    <table style="width: 100%; border-collapse: collapse; margin-bottom: 24px;">
+      <tr><td style="color: #8E8E93; padding: 6px 0; font-size: 13px;">Client Name:</td><td style="color: #F9F9FB; font-weight: bold; font-size: 14px;">${name}</td></tr>
+      <tr><td style="color: #8E8E93; padding: 6px 0; font-size: 13px;">Email Address:</td><td style="color: #F9F9FB; font-family: monospace; font-size: 13px;">${email}</td></tr>
+      <tr><td style="color: #8E8E93; padding: 6px 0; font-size: 13px;">Phone:</td><td style="color: #F9F9FB; font-size: 13px;">${phone || "Not provided"}</td></tr>
+      <tr><td style="color: #8E8E93; padding: 6px 0; font-size: 13px;">Topic:</td><td style="color: #D8C3A5; font-weight: bold; font-size: 13px;">${subject}</td></tr>
+    </table>
+    <div style="background: #0C0C0E; border: 1px solid #26262B; border-radius: 8px; padding: 16px; margin-bottom: 24px;">
+      <span style="color: #8E8E93; font-size: 11px; text-transform: uppercase; font-weight: bold;">Client Message:</span>
+      <p style="color: #F9F9FB; font-size: 14px; line-height: 1.6; margin-top: 8px; white-space: pre-wrap;">${message}</p>
+    </div>
+    <p style="color: #8E8E93; font-size: 11px; margin: 0;">SN24 Luxury Concierge Operations &bull; ${STORE_URL}</p>
+  </div>
+</body>
+</html>
+  `.trim();
+
+  try {
+    const transporter = getTransporter();
+    if (transporter) {
+      const info = await transporter.sendMail({
+        from: `"${FROM_NAME}" <${FROM_EMAIL}>`,
+        to: conciergeTo,
+        replyTo: email,
+        subject: emailSubject,
+        text,
+        html,
+      });
+      console.log(`[SN24 Mail] Concierge inquiry sent to ${conciergeTo} (MessageId: ${info.messageId})`);
+      return { success: true, messageId: info.messageId };
+    } else {
+      console.log(`[SN24 Mail (Dev Logger)] Concierge inquiry from ${name} (${email}): ${message}`);
+      return { success: true, isDevLog: true };
+    }
+  } catch (error: any) {
+    console.error("[SN24 Mail Error] Failed to send contact inquiry email:", error.message || error);
+    return { success: false, error: error.message };
+  }
+}
+
 

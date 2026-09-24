@@ -22,7 +22,7 @@ export default async function NewArrivalsPage() {
       <div className="relative h-[40vh] md:h-[50vh] w-full flex items-center justify-center overflow-hidden">
         <div 
           className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: `url(https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=2070&auto=format&fit=crop)` }}
+          style={{ backgroundImage: `url(/uploads/1786654782269-download__8_.jpg)` }}
         />
         <div className="absolute inset-0 bg-black/40" />
         <div className="relative z-10 text-center px-4">

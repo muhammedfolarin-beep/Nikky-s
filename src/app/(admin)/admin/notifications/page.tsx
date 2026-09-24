@@ -1,37 +1,85 @@
-import { Bell, Search } from "lucide-react";
+import { prisma } from "@/lib/prisma";
+import NotificationsClient, { AdminNotification } from "./NotificationsClient";
 
-export default function NotificationsPage() {
+export default async function NotificationsPage() {
+  const [orders, users] = await Promise.all([
+    prisma.order.findMany({
+      orderBy: { createdAt: "desc" },
+      take: 20,
+      include: { items: true },
+    }),
+    prisma.user.findMany({
+      where: { role: "USER" },
+      orderBy: { id: "desc" },
+      take: 10,
+      select: {
+        id: true,
+        name: true,
+        email: true,
+      }
+    })
+  ]);
+
+  const notifications: AdminNotification[] = [];
+
+  // 1. Process orders for notifications
+  for (const order of orders) {
+    const hasCustom = order.items.some(i => i.size?.toLowerCase().includes("custom") || i.size?.toLowerCase().includes("b:"));
+    
+    if (hasCustom) {
+      notifications.push({
+        id: `notif-bespoke-${order.id}`,
+        type: "BESPOKE_ALERT",
+        title: `Bespoke Tailoring Request for Order #${order.id.slice(-6).toUpperCase()}`,
+        description: `${order.shippingName} selected custom made-to-measure tailoring. Measurements and garment silhouettes are ready for artisan pattern making.`,
+        timestamp: order.createdAt,
+        link: `/admin/orders`,
+        priority: "high"
+      });
+    }
+
+    if (order.status === "PAID" || order.status === "DELIVERED" || order.status === "SHIPPED") {
+      notifications.push({
+        id: `notif-paid-${order.id}`,
+        type: "ORDER_PAID",
+        title: `Payment Received for Order #${order.id.slice(-6).toUpperCase()}`,
+        description: `Verified payment received from ${order.shippingName} (${order.shippingEmail}) via Paystack.`,
+        timestamp: order.createdAt,
+        link: `/admin/orders`,
+        priority: "medium"
+      });
+    } else if (order.status === "PENDING") {
+      notifications.push({
+        id: `notif-pending-${order.id}`,
+        type: "ORDER_PENDING",
+        title: `Pending Checkout for Order #${order.id.slice(-6).toUpperCase()}`,
+        description: `Order checkout initialized by ${order.shippingName}. Awaiting Paystack transaction confirmation.`,
+        timestamp: order.createdAt,
+        link: `/admin/orders`,
+        priority: "low"
+      });
+    }
+  }
+
+  // 2. Process customer signups
+  for (const user of users) {
+    notifications.push({
+      id: `notif-user-${user.id}`,
+      type: "USER_REGISTERED",
+      title: `New Client Registration: ${user.name || "Valued Client"}`,
+      description: `${user.email} opened a new account on the SN24 storefront.`,
+      timestamp: new Date(),
+      link: `/admin/customers`,
+      priority: "low"
+    });
+  }
+
+  // Sort by latest timestamp
+  notifications.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+
   return (
-    <div className="pt-4">
-      <div className="flex items-center justify-between mb-8">
-        <h1 className="text-2xl font-semibold text-gray-800">Notifications</h1>
-        <button className="text-sm font-medium text-brand-midnight hover:text-brand-champagne transition-colors">
-          Mark all as read
-        </button>
-      </div>
-
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden flex flex-col min-h-[500px]">
-        <div className="p-4 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
-          <div className="relative w-64">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
-            <input 
-              type="text" 
-              placeholder="Search notifications..." 
-              className="w-full pl-9 pr-4 py-2 rounded-lg border border-gray-200 bg-white text-sm focus:outline-none focus:border-brand-champagne"
-            />
-          </div>
-        </div>
-        
-        <div className="flex-1 flex flex-col items-center justify-center text-center p-8">
-          <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mb-4">
-            <Bell size={32} className="text-gray-300" />
-          </div>
-          <h3 className="text-lg font-medium text-gray-900 mb-2">You're All Caught Up!</h3>
-          <p className="text-gray-500 text-sm max-w-sm">
-            System alerts, low stock warnings, and important updates will appear in this feed.
-          </p>
-        </div>
-      </div>
+    <div className="p-8">
+      <NotificationsClient initialNotifications={notifications} />
     </div>
   );
 }

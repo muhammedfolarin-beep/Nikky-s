@@ -28,23 +28,59 @@ const faqs = [
   }
 ];
 
+import { submitContactInquiry } from "@/lib/actions";
+
 export default function ContactPage() {
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    subject: "Sizing & Fit Consultation",
+    message: ""
+  });
 
   const toggleFaq = (index: number) => {
     setOpenFaq(openFaq === index ? null : index);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    setTimeout(() => {
+    setErrorMessage("");
+
+    try {
+      const res = await submitContactInquiry({
+        firstName: formData.name,
+        lastName: "",
+        email: formData.email,
+        phone: formData.phone,
+        subject: formData.subject,
+        message: formData.message,
+      });
+
+      if (res.success) {
+        setIsSuccess(true);
+        setFormData({
+          name: "",
+          email: "",
+          phone: "",
+          subject: "Sizing & Fit Consultation",
+          message: ""
+        });
+        setTimeout(() => setIsSuccess(false), 6000);
+      } else {
+        setErrorMessage(res.error || "Failed to transmit message. Please try again.");
+      }
+    } catch (err: any) {
+      setErrorMessage("An unexpected error occurred. Please reach out via WhatsApp or email directly.");
+    } finally {
       setIsSubmitting(false);
-      setIsSuccess(true);
-      setTimeout(() => setIsSuccess(false), 4000);
-    }, 1200);
+    }
   };
 
   return (
@@ -52,7 +88,7 @@ export default function ContactPage() {
       {/* Hero Banner */}
       <div className="relative h-[40vh] w-full flex items-center justify-center overflow-hidden bg-brand-midnight">
         <Image 
-          src="https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=1600&auto=format&fit=crop" 
+          src="/uploads/1786653991709-494.jpg" 
           alt="SN24 Concierge" 
           fill 
           className="object-cover opacity-30" 
@@ -186,6 +222,12 @@ export default function ContactPage() {
             </h2>
 
             <form onSubmit={handleSubmit} className="space-y-6">
+              {errorMessage && (
+                <div className="bg-red-50 border border-red-200 text-red-700 text-xs p-3 rounded-lg">
+                  {errorMessage}
+                </div>
+              )}
+
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-xs font-semibold text-brand-charcoal uppercase tracking-wider mb-2">
@@ -194,6 +236,8 @@ export default function ContactPage() {
                   <input 
                     required 
                     type="text" 
+                    value={formData.name}
+                    onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
                     className="w-full bg-brand-softwhite border border-brand-stone rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-brand-champagne transition-colors" 
                     placeholder="Full Name" 
                   />
@@ -205,6 +249,8 @@ export default function ContactPage() {
                   <input 
                     required 
                     type="email" 
+                    value={formData.email}
+                    onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
                     className="w-full bg-brand-softwhite border border-brand-stone rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-brand-champagne transition-colors" 
                     placeholder="email@example.com" 
                   />
@@ -218,6 +264,8 @@ export default function ContactPage() {
                   </label>
                   <input 
                     type="tel" 
+                    value={formData.phone}
+                    onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
                     className="w-full bg-brand-softwhite border border-brand-stone rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-brand-champagne transition-colors" 
                     placeholder="+234..." 
                   />
@@ -226,11 +274,15 @@ export default function ContactPage() {
                   <label className="block text-xs font-semibold text-brand-charcoal uppercase tracking-wider mb-2">
                     Inquiry Topic
                   </label>
-                  <select className="w-full bg-brand-softwhite border border-brand-stone rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-brand-champagne transition-colors text-brand-midnight">
-                    <option>Sizing & Fit Consultation</option>
-                    <option>Delivery Logistics & Tracking</option>
-                    <option>Bespoke / Custom Order</option>
-                    <option>General Client Support</option>
+                  <select 
+                    value={formData.subject}
+                    onChange={(e) => setFormData(prev => ({ ...prev, subject: e.target.value }))}
+                    className="w-full bg-brand-softwhite border border-brand-stone rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-brand-champagne transition-colors text-brand-midnight"
+                  >
+                    <option value="Sizing & Fit Consultation">Sizing & Fit Consultation</option>
+                    <option value="Delivery Logistics & Tracking">Delivery Logistics & Tracking</option>
+                    <option value="Bespoke / Custom Order">Bespoke / Custom Order</option>
+                    <option value="General Client Support">General Client Support</option>
                   </select>
                 </div>
               </div>
@@ -242,6 +294,8 @@ export default function ContactPage() {
                 <textarea 
                   required 
                   rows={4} 
+                  value={formData.message}
+                  onChange={(e) => setFormData(prev => ({ ...prev, message: e.target.value }))}
                   className="w-full bg-brand-softwhite border border-brand-stone rounded-lg p-4 text-sm focus:outline-none focus:border-brand-champagne transition-colors resize-none" 
                   placeholder="Please describe your inquiry, order reference, or custom tailoring requirement..."
                 />

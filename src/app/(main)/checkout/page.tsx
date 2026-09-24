@@ -195,7 +195,8 @@ export default function CheckoutPage() {
 
       if (result.success) {
         clearCart();
-        router.push(`/checkout/success?email=${encodeURIComponent(formData.email)}`);
+        const paymentRef = reference.reference || `PAYSTACK-${Date.now()}`;
+        router.push(`/checkout/success?orderId=${encodeURIComponent(result.orderId || "")}&ref=${encodeURIComponent(paymentRef)}&email=${encodeURIComponent(formData.email)}`);
       } else {
         setError("Your payment was received, but there was an issue creating the order record. Please contact concierge support with your reference.");
         setIsProcessing(false);
